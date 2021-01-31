@@ -1,0 +1,71 @@
+---
+- hosts: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+  tasks:
+  - name: Install dependent roles & collections
+    command: ansible-galaxy install -i -r ../requirements.yml
+
+- hosts: local
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+    hypriot_flash_version: 2.7.1
+    hypriot_flash_url: https://github.com/hypriot/flash/releases/download/{{ hypriot_flash_version }}/flash
+    hypriot_image_version: 1.12.3
+    # yamllint disable rule:line-length
+    hypriot_image_url: >-
+      https://github.com/hypriot/image-builder-rpi/releases/download/v{{ hypriot_image_version }}/hypriotos-rpi-v{{ hypriot_image_version }}.img.zip
+    # yamllint enable rule:line-length
+    node_os_url: '{{ hypriot_image_url }}'
+    nameservers:
+    - 1.1.1.1
+    search_domains:
+    - local
+
+  vars_prompt:
+  - name: gh_username
+    prompt: What is your github user name?
+    private: false
+
+  - name: node_ip
+    prompt: What static IPv4 address do you want to assign to this node?
+    private: false
+
+  - name: gateway_ip
+    prompt: What gateway IPv4 address do you want to assign to this node?
+    private: false
+
+  - name: hostname
+    prompt: What hostname do you want to assign to this device?
+    private: false
+
+  - name: username
+    prompt: What username do you want to use on this device?
+    private: false
+
+  pre_tasks:
+  - name: Validate provided IPv4 addresses
+    fail:
+      msg: >-
+        IPv4 address {{ item.ip }} for {{ item.name }} is invalid
+    with_items:
+    - {name: node_ip, ip: '{{ node_ip }}'}
+    - {name: gateway_ip, ip: '{{ gateway_ip }}'}
+    when: not item.ip is regex('^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$')
+    run_once: true
+
+  - name: Validate provided node hostname
+    fail:
+      msg: >-
+        Hostname {{ hostname }} is invalid
+    # yamllint disable-line rule:line-length
+    when: not hostname is regex('^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$')
+    run_once: true
+
+  gather_facts: true
+
+  roles:
+  - turing_pi/rpi_boot
+  - turing_pi/hypriot_flash
+  - turing_pi/create_node

@@ -1,0 +1,65 @@
+---
+- name: Get SSH keys from Github
+  uri:
+    url: https://api.github.com/users/{{ gh_username }}/keys
+    method: GET
+    return_content: true
+    status_code: [200]
+    body_format: json
+  register: gh_ssh_keys_req
+
+- name: Generate a temporary directory for the node files
+  tempfile:
+    state: directory
+    prefix: node
+    suffix: config
+  register: node_config
+
+- name: Generate a cloud-init
+  template:
+    src: cloud-init.j2
+    dest: '{{ node_config.path }}/cloud-init.yml'
+    mode: u=r,g=r,o=r
+  register: cloud_init_file
+
+- name: Generate a static network config
+  template:
+    src: network-config.j2
+    dest: '{{ node_config.path }}/network-config'
+    mode: u=r,g=r,o=r
+  register: network_config_file
+
+- name: Put the UUT in boot mode
+  command: rpiboot
+
+- name: Get compute module disk
+  pause:
+    prompt: Enter the disk that was mounted for the compute module
+  register: disk_prompt
+
+- name: Gather compute module disk information
+  stat:
+    path: /dev/{{ disk_prompt.user_input }}
+  register: compute_module
+
+- name: Validate that compute module disk is connected
+  fail:
+    msg: >-
+      Compute module disk {{ hostname }} not found
+  when: not compute_module.stat.exists
+  run_once: true
+
+- name: Flash compute module
+  command: >-
+    flash
+      --force
+      --hostname {{ hostname }}
+      --userdata {{ cloud_init_file.dest }}
+      --file {{ network_config_file.dest }}
+      --device /dev/{{ disk_prompt.user_input }} {{ node_os_url }}
+
+- name: Cleanup the temporary node config directory now that we're done
+  file:
+    path: '{{ node_config.path }}'
+    state: absent
+  when: node_config.path is defined
