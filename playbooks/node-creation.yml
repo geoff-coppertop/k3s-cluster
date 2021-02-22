@@ -44,6 +44,10 @@
     prompt: What username do you want to use on this device?
     private: false
 
+  - name: run_rpi_boot
+    prompt: Do you want to run RPi USBBoot?
+    private: false
+
   pre_tasks:
   - name: Validate provided IPv4 addresses
     fail:
@@ -63,9 +67,16 @@
     when: not hostname is regex('^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$')
     run_once: true
 
+  - name: Validate truthiness of run_rpi_boot
+    fail:
+      msg: Value of run_rpi_boot ({{ run_rpi_boot }}) is not truthy or falsy
+    when: not ( ( run_rpi_boot is truthy(convert_bool=True) ) or ( run_rpi_boot is falsy(convert_bool=True) ) )
+    run_once: true
+
   gather_facts: true
 
   roles:
-  - turing_pi/rpi_boot
-  - turing_pi/hypriot_flash
-  - turing_pi/create_node
+  - role: turing_pi/rpi_boot
+    when: run_rpi_boot is truthy(convert_bool=True)
+  - role: turing_pi/hypriot_flash
+  - role: turing_pi/create_node

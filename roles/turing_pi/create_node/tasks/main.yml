@@ -31,21 +31,22 @@
 
 - name: Put the UUT in boot mode
   command: rpiboot
+  when: run_rpi_boot is truthy(convert_bool=True)
 
-- name: Get compute module disk
+- name: Get disk
   pause:
     prompt: Enter the disk that was mounted for the compute module
   register: disk_prompt
 
-- name: Gather compute module disk information
+- name: Gather disk information
   stat:
     path: /dev/{{ disk_prompt.user_input }}
   register: compute_module
 
-- name: Validate that compute module disk is connected
+- name: Validate that disk is connected
   fail:
     msg: >-
-      Compute module disk {{ hostname }} not found
+      Disk {{ hostname }} not found
   when: not compute_module.stat.exists
   run_once: true
 
