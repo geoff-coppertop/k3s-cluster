@@ -7,3 +7,5 @@
     OBJC_DISABLE_INITIALIZE_FORK_SAFETY: YES
   roles:
   - management/metallb/setup
+  - management/dns/setup
+  - management/dns/unbound/setup

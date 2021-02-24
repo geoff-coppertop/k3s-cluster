@@ -13,3 +13,11 @@ extra_agent_args: ''
 metallb_version: v0.9.5
 metallb_start_addr: 192.168.1.70
 metallb_end_addr: 192.168.1.99
+
+# Unbound
+unbound_addr: 192.168.1.70
+unbound_version: 1.13.1
+
+# Traefik
+domain_name: example.com
+traefik_addr: 192.168.1.72

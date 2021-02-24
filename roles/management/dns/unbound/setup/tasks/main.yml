@@ -1,0 +1,11 @@
+---
+- name: Setup Unbound
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: 01-configmap.yml}
+  - {type: template, path: 02-deployment.yml}
+  - {type: template, path: 03-service-tcp.yml}
+  - {type: template, path: 04-service-udp.yml}

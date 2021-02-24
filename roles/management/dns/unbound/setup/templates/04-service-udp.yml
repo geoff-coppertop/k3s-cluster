@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    metallb.universe.tf/allow-shared-ip: unbound-svc
+  name: svc-dns-unbound-udp
+  namespace: dns-system
+spec:
+  loadBalancerIP: '{{ unbound_addr }}'
+  ports:
+  - port: 53
+    targetPort: 5053
+    protocol: UDP
+    name: dns-udp
+  selector:
+    app: unbound
+  type: LoadBalancer
