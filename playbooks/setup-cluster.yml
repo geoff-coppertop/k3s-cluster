@@ -32,3 +32,5 @@
   become: true
   roles:
   - geoff_coppertop.k3s_roles.k3s.node
+
+- import_playbook: setup-management.yml

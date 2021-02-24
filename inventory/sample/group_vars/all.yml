@@ -8,3 +8,8 @@ systemd_dir: /etc/systemd/system
 master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
 extra_server_args: --disable=servicelb,traefik --flannel-backend=host-gw
 extra_agent_args: ''
+
+# Metal LB
+metallb_version: v0.9.5
+metallb_start_addr: 192.168.1.70
+metallb_end_addr: 192.168.1.99
