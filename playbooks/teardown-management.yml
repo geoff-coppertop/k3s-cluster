@@ -6,4 +6,5 @@
     # yamllint disable-line rule:truthy
     OBJC_DISABLE_INITIALIZE_FORK_SAFETY: YES
   roles:
+  - management/dns/teardown
   - management/metallb/teardown
