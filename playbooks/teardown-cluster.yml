@@ -1,4 +1,6 @@
 ---
+- import_playbook: teardown-management.yml
+
 - hosts: cluster
   gather_facts: true
   become: true
