@@ -1,0 +1,15 @@
+---
+- name: Remove traefik release
+  community.kubernetes.helm:
+    name: traefik
+    purge: true
+    release_namespace: traefik
+    state: absent
+    wait: true
+
+- name: Remove the Traefik namespace
+  community.kubernetes.k8s:
+    name: traeik
+    api_version: v1
+    kind: Namespace
+    state: absent
