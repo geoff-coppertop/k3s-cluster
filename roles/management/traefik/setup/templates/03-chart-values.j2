@@ -1,0 +1,46 @@
+---
+additionalArguments:
+{% if acme_issuer == 'production' %}
+  - --certificatesResolvers.{{ acme_issuer }}.acme.caServer={{ acme_prod_url }}
+{% else %}
+  - --certificatesResolvers.{{ acme_issuer }}.acme.caServer={{ acme_staging_url }}
+{% endif %}
+  - --certificatesResolvers.{{ acme_issuer }}.acme.dnsChallenge.delayBeforeCheck={{ acme_dns_delay }}
+  - --certificatesResolvers.{{ acme_issuer }}.acme.dnsChallenge.provider={{ acme_dns_provider }}
+  - --certificatesresolvers.{{ acme_issuer }}.acme.dnschallenge.resolvers={{ acme_dns_resolver }}
+  - --certificatesResolvers.{{ acme_issuer }}.acme.email={{ acme_email }}
+  - --certificatesResolvers.{{ acme_issuer }}.acme.storage=/certs/{{ acme_issuer }}.json
+  - --entrypoints.websecure.http.tls.certresolver={{ acme_issuer }}
+  - --entrypoints.websecure.http.tls.domains[0].main={{ domain_name }}
+  - --entrypoints.websecure.http.tls.domains[0].sans=*.{{ domain_name }}
+  - --providers.file.filename=/data/traefik-config.yaml
+ports:
+  web:
+    redirectTo: websecure
+env:
+  - name: CF_API_EMAIL
+    valueFrom:
+      secretKeyRef:
+        key: email
+        name: cloudflare-api-credentials
+  - name: CF_API_KEY
+    valueFrom:
+      secretKeyRef:
+        key: apiKey
+        name: cloudflare-api-credentials
+ingressRoute:
+  dashboard:
+    enabled: false
+persistence:
+  enabled: true
+  path: /certs
+  size: 128Mi
+volumes:
+  - mountPath: /data
+    name: traefik-config
+    type: configMap
+service:
+  enabled: true
+  spec:
+    loadBalancerIP: "{{ traefik_addr }}"
+  type: LoadBalancer

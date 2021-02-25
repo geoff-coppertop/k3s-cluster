@@ -1,0 +1,34 @@
+---
+- name: Start Traefik setup
+  k8s:
+    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: 00-namespace.yml}
+  - {type: template, path: 01-configmap.yml}
+  - {type: template, path: 02-secret-cloudflare.yml}
+
+- name: Add helm repo
+  community.kubernetes.helm_repository:
+    name: traefik
+    repo_url: https://helm.traefik.io/traefik
+
+- name: Deploy Traefik chart on 9.13.0 with values loaded from template
+  community.kubernetes.helm:
+    name: traefik
+    chart_ref: traefik/traefik
+    chart_version: 9.13.0
+    values: "{{ lookup('template', '03-chart-values.j2') | from_yaml }}"
+    release_namespace: traefik
+    wait: true
+
+- name: Finish Traefik setup
+  k8s:
+    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: 04-secret-dashboard.yml}
+  - {type: template, path: 05-middleware.yml}
+  - {type: template, path: 06-ingress.yml}

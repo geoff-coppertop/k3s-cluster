@@ -10,3 +10,4 @@
   - management/dns/setup
   - management/dns/unbound/setup
   - helm
+  - management/traefik/setup

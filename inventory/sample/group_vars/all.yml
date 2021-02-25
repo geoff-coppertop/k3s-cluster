@@ -24,3 +24,16 @@ traefik_addr: 192.168.1.72
 
 # Helm
 helm_url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+
+# ACME
+acme_prod_url: https://acme-v02.api.letsencrypt.org/directory
+acme_staging_url: https://acme-staging-v02.api.letsencrypt.org/directory
+acme_dns_delay: 120
+acme_dns_provider: cloudflare
+acme_dns_resolver: 1.1.1.1
+acme_email: example@example.com
+acme_issuer: staging
+
+# Cloudfare
+cloudflare_api_email: example@example.com
+cloudflare_api_key: 66c7bbbb8888a99aaa9b8c7d6b90e1375b92c
