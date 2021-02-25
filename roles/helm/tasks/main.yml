@@ -1,0 +1,12 @@
+---
+- name: Check if helm is installed
+  stat:
+    path: /usr/local/bin/helm
+  register: helm_installed
+
+- name: Install helm
+  become: true
+  shell: set -o pipefail && curl -sfL {{ helm_url }} | bash
+  args:
+    warn: false
+  when: not helm_installed.stat.exists

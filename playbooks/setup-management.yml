@@ -9,3 +9,4 @@
   - management/metallb/setup
   - management/dns/setup
   - management/dns/unbound/setup
+  - helm

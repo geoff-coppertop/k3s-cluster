@@ -21,3 +21,6 @@ unbound_version: 1.13.1
 # Traefik
 domain_name: example.com
 traefik_addr: 192.168.1.72
+
+# Helm
+helm_url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
