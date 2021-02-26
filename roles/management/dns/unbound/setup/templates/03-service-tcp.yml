@@ -4,7 +4,7 @@ kind: Service
 metadata:
   annotations:
     metallb.universe.tf/allow-shared-ip: unbound-svc
-  name: svc-dns-unbound-tcp
+  name: unbound-dns-tcp
   namespace: dns-system
 spec:
   loadBalancerIP: '{{ unbound_addr }}'
