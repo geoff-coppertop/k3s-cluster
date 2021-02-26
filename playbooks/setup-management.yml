@@ -8,3 +8,4 @@
   - management/dns/unbound/setup
   - helm
   - management/traefik/setup
+  - management/dns/pihole/setup
