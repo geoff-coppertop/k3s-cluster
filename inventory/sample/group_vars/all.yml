@@ -43,3 +43,9 @@ cloudflare_api_key: 66c7bbbb8888a99aaa9b8c7d6b90e1375b92c
 # Pihole
 pihole_addr: 192.168.1.71
 pihole_web_password: admin
+
+# InfluxDB
+influxdb_addr: 192.168.1.73
+influxdb_dbname: monitoring
+influxdb_username: admin
+influxdb_password: admin

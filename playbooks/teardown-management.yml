@@ -3,8 +3,9 @@
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
   roles:
-  - management/dns/pihole/teardown
-  - management/traefik/teardown
-  - management/dns/teardown
-  - management/metallb/teardown
-  - management/nfs/teardown
+  - management/monitoring/teardown
+  # - management/dns/pihole/teardown
+  # - management/traefik/teardown
+  # - management/dns/teardown
+  # - management/metallb/teardown
+  # - management/nfs/teardown
