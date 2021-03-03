@@ -81,3 +81,8 @@
     state: present
   when:
   - raspberry_pi | default(false)
+  register: packages_installed
+
+- name: Reboot the server and wait for it to come back up.
+  reboot:
+  when: packages_installed.changed

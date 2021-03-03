@@ -20,7 +20,6 @@
   roles:
   - geoff_coppertop.k3s_roles.raspberrypi
   - turing_pi/setup
-  - reboot
 
 - hosts: master
   become: true
