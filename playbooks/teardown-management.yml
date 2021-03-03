@@ -7,3 +7,4 @@
   - management/traefik/teardown
   - management/dns/teardown
   - management/metallb/teardown
+  - management/nfs/teardown
