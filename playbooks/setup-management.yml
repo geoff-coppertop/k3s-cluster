@@ -16,12 +16,12 @@
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
   roles:
-  # - helm
-  # - management/nfs/setup
-  # - management/metallb/setup
-  # - management/dns/setup
-  # - management/dns/unbound/setup
-  # - management/traefik/setup
-  # - management/dns/pihole/setup
+  - helm
+  - management/nfs/setup
+  - management/metallb/setup
+  - management/dns/setup
+  - management/dns/unbound/setup
+  - management/traefik/setup
+  - management/dns/pihole/setup
   - management/monitoring/setup
   - management/monitoring/influxdb/setup
