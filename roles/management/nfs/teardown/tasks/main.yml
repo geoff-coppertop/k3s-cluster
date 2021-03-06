@@ -7,6 +7,11 @@
     state: absent
     wait: true
 
+- name: Remove nfs-provisioner repo
+  community.kubernetes.helm_repository:
+    name: nfs-provisioner
+    state: absent
+
 - name: Remove the nfs-provisioner namespace
   community.kubernetes.k8s:
     name: nfs
