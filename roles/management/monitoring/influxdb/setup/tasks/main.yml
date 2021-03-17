@@ -1,7 +1,7 @@
 ---
 - name: Start InfluxDB setup
   k8s:
-    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
     state: present
     wait: true
   with_items:
@@ -17,7 +17,7 @@
     name: influxdb
     chart_ref: influxdata/influxdb
     chart_version: 4.9.14
-    values: "{{ lookup('template', '00-chart-values.yml') | from_yaml }}"
+    values: "{{ lookup('template', '01-chart-values.yml') | from_yaml }}"
     release_namespace: monitoring
     update_repo_cache: true
     create_namespace: true
@@ -30,8 +30,8 @@
     state: present
     wait: true
   with_items:
-  - {type: template, path: 01-middleware.yml}
-  - {type: template, path: 02-ingress.yml}
+  - {type: template, path: 02-middleware.yml}
+  - {type: template, path: 03-ingress.yml}
 
 - name: Pause play until the InfluxDB URL is reachable from this host
   uri:
@@ -42,3 +42,34 @@
   until: _result.status == 200
   retries: 720  # 720 * 5 seconds = 1hour (60*60/5)
   delay: 5  # Every 5 seconds
+
+- name: Setup InfluxDB databases
+  community.general.influxdb_database:
+    hostname: monitoring.{{ domain_name }}
+    path: /db
+    port: 443
+    ssl: true
+    validate_certs: false
+    username: '{{ influxdb_username }}'
+    password: '{{ influxdb_password }}'
+    database_name: '{{ item }}'
+  with_items:
+  - '{{ telegraf_cluster_db }}'
+
+- name: Create InfluxDB users for writing data
+  community.general.influxdb_user:
+    user_name: '{{ item.user }}'
+    user_password: '{{ item.pass }}'
+    login_username: '{{ influxdb_username }}'
+    login_password: '{{ influxdb_password }}'
+    hostname: monitoring.{{ domain_name }}
+    path: /db
+    port: 443
+    ssl: true
+    validate_certs: false
+    grants:
+    - database: '{{ item.database }}'
+      privilege: '{{ item.privilege }}'
+  with_items:
+  # yamllint disable-line rule:line-length
+  - {user: '{{ telegraf_cluster_db_user }}', pass: '{{ telegraf_cluster_db_pass }}', privilege: WRITE, database: '{{ telegraf_cluster_db }}'}
