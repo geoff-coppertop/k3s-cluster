@@ -73,3 +73,18 @@
   with_items:
   # yamllint disable-line rule:line-length
   - {user: '{{ telegraf_cluster_db_user }}', pass: '{{ telegraf_cluster_db_pass }}', privilege: WRITE, database: '{{ telegraf_cluster_db }}'}
+
+- name: Create InfluxDB user for grafana with read privilege
+  community.general.influxdb_user:
+    user_name: '{{ grafana_db_user }}'
+    user_password: '{{ grafana_db_pass }}'
+    login_username: '{{ influxdb_username }}'
+    login_password: '{{ influxdb_password }}'
+    hostname: monitoring.{{ domain_name }}
+    path: /db
+    port: 443
+    ssl: true
+    validate_certs: false
+    grants:
+    - database: '{{ telegraf_cluster_db }}'
+      privilege: READ

@@ -27,3 +27,6 @@ I want to understand,
 * (influxdata)<https://github.com/influxdata/helm-charts>
 * (k8s dashboard)<https://github.com/kubernetes/dashboard>
 * (unbound)<https://github.com/influxdata/telegraf/tree/master/plugins/inputs/unbound>
+* (K8s InfluxDB Grafana dashboard)<https://medium.com/starschema-blog/monitor-your-infrastructure-with-influxdb-and-grafana-on-kubernetes-a299a0afe3d2>
+* (Telegraf: system dashboard)<https://grafana.com/grafana/dashboards/928>
+* (K8s Aggregated Container Stats)<https://grafana.com/grafana/dashboards/9111>

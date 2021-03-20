@@ -26,3 +26,4 @@
   - management/monitoring/setup
   - management/monitoring/influxdb/setup
   - management/monitoring/telegraf/setup
+  - management/monitoring/grafana/setup
