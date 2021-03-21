@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unbound
+  namespace: dns-system
+  labels:
+    app: unbound
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unbound
+  template:
+    metadata:
+      labels:
+        app: unbound
+    spec:
+      containers:
+      - name: unbound
+        image: klutchell/unbound:{{ unbound_version }}
+        ports:
+        - containerPort: 5053
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 5053
+          name: dns-udp
+          protocol: UDP
+        volumeMounts:
+        - name: unbound-a-records
+          mountPath: /opt/unbound/etc/unbound/a-records.conf
+          subPath: a-records.conf
+      volumes:
+      - name: unbound-a-records
+        configMap:
+          name: unbound-a-records

@@ -1,0 +1,9 @@
+---
+- import_playbook: management-teardown.yml
+
+- hosts: cluster
+  gather_facts: true
+  become: true
+  roles:
+  - geoff_coppertop.k3s_roles.reset
+  - reboot

@@ -1,0 +1,36 @@
+---
+- hosts: local
+  gather_facts: false
+  vars:
+    ansible_python_interpreter: '{{ ansible_playbook_python }}'
+  pre_tasks:
+  - name: Install dependent roles & collections
+    command: ansible-galaxy install -i -r ../requirements.yml
+
+- hosts: cluster
+  become: true
+  gather_facts: true
+  roles:
+  - geoff_coppertop.k3s_roles.prereq
+  - geoff_coppertop.k3s_roles.download
+
+- hosts: raspberrys
+  gather_facts: true
+  become: true
+  roles:
+  - geoff_coppertop.k3s_roles.raspberrypi
+  - turing_pi/setup
+  - reboot
+
+- hosts: master
+  become: true
+  roles:
+  - geoff_coppertop.k3s_roles.k3s.master
+  - control
+
+- hosts: node
+  become: true
+  roles:
+  - geoff_coppertop.k3s_roles.k3s.node
+
+- import_playbook: management-setup.yml

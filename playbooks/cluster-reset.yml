@@ -1,0 +1,3 @@
+---
+- import_playbook: cluster-teardown.yml
+- import_playbook: cluster-setup.yml
