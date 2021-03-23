@@ -1,3 +1,4 @@
 inventory/*
 .cache/*
 ansible.cfg
+.DS_Store

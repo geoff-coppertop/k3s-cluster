@@ -81,3 +81,9 @@
     state: present
   when:
   - raspberry_pi | default(false)
+
+- name: Install avahi-daemon Packages
+  apt:
+    name:
+    - avahi-daemon
+    state: present

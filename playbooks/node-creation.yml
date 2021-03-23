@@ -17,7 +17,11 @@
     hypriot_image_url: >-
       https://github.com/hypriot/image-builder-rpi/releases/download/v{{ hypriot_image_version }}/hypriotos-rpi-v{{ hypriot_image_version }}.img.zip
     # yamllint enable rule:line-length
-    node_os_url: '{{ hypriot_image_url }}'
+    ubuntu_image_version: 20.04.2
+    # yamllint disable rule:line-length
+    ubuntu_image_url: >-
+      https://cdimage.ubuntu.com/releases/{{ ubuntu_image_version }}/release/ubuntu-{{ ubuntu_image_version }}-preinstalled-server-arm64+raspi.img.xz
+    # yamllint enable rule:line-length
     nameservers:
     - 1.1.1.1
     search_domains:
@@ -48,6 +52,10 @@
     prompt: Do you want to run RPi USBBoot?
     private: false
 
+  - name: os_choice
+    prompt: Which OS do you want to load (Ubuntu/Hypriot)?
+    private: false
+
   pre_tasks:
   - name: Validate provided IPv4 addresses
     fail:
@@ -72,6 +80,21 @@
       msg: Value of run_rpi_boot ({{ run_rpi_boot }}) is not truthy or falsy
     when: not ( ( run_rpi_boot is truthy(convert_bool=True) ) or ( run_rpi_boot is falsy(convert_bool=True) ) )
     run_once: true
+
+  - name: Validate OS choice
+    fail:
+      msg: Value of os_choice ({{ os_choice }}) is not Hypriot or Ubuntu
+    when: not os_choice is regex('^(?i)(ubuntu|hypriot)$')
+
+  - name: Set OS image URL to Ubuntu
+    set_fact:
+      node_os_url: '{{ ubuntu_image_url }}'
+    when: os_choice is regex('^(?i)ubuntu$')
+
+  - name: Set OS image URL to Hypriot
+    set_fact:
+      node_os_url: '{{ hypriot_image_url }}'
+    when: os_choice is regex('^(?i)hypriot$')
 
   gather_facts: true
 
