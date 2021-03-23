@@ -13,11 +13,6 @@
   roles:
   - geoff_coppertop.k3s_roles.prereq
   - geoff_coppertop.k3s_roles.download
-
-- hosts: raspberrys
-  gather_facts: true
-  become: true
-  roles:
   - geoff_coppertop.k3s_roles.raspberrypi
   - turing_pi/setup
   - reboot
