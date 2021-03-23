@@ -28,4 +28,4 @@
   roles:
   - geoff_coppertop.k3s_roles.k3s.node
 
-# - import_playbook: management-setup.yml
+- import_playbook: management-setup.yml
