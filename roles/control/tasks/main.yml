@@ -4,9 +4,3 @@
     src: ~{{ ansible_user }}/.kube/config
     dest: ~/.kube/config
     flat: true
-
-- name: Install dependent python packages
-  pip:
-    name:
-    - openshift==0.11.2
-    - pyyaml==5.3.1
