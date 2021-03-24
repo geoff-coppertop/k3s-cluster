@@ -11,6 +11,10 @@ master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['m
 extra_server_args: --disable=servicelb,traefik --flannel-backend=host-gw
 extra_agent_args: ''
 
+# nfs
+nfs_server_addr: 192.168.1.50
+nfs_server_path: /volume1/cluster
+
 # Metal LB
 metallb_version: v0.9.5
 metallb_start_addr: 192.168.1.70
