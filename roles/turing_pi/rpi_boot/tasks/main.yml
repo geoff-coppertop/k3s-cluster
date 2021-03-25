@@ -1,0 +1,53 @@
+---
+- name: Check if rpiboot is installed
+  stat:
+    path: /usr/local/bin/rpiboot
+  register: rpiboot_installed
+
+- name: Install dependent packages
+  community.general.homebrew:
+    name: '{{ item }}'
+    state: present
+  with_items:
+  - make
+  - libusb
+  when: not rpiboot_installed.stat.exists
+
+- name: Generate a temporary directory for the rpiboot tool
+  tempfile:
+    state: directory
+    prefix: node
+    suffix: rpiboot
+  register: rpiboot_repo
+  when: not rpiboot_installed.stat.exists
+
+- name: Checkout rpiboot repository
+  ansible.builtin.git:
+    repo: https://github.com/raspberrypi/usbboot
+    dest: '{{ rpiboot_repo.path }}/rpiboot'
+    depth: 1
+  when: not rpiboot_installed.stat.exists
+
+- name: Build rpiboot
+  community.general.make:
+    chdir: '{{ rpiboot_repo.path }}/rpiboot'
+  when: not rpiboot_installed.stat.exists
+
+- name: Check if rpiboot is installed
+  stat:
+    path: '{{ rpiboot_repo.path }}/rpiboot/rpiboot'
+  register: rpiboot_built
+  when: not rpiboot_installed.stat.exists
+
+- name: Copy rpiboot to a permanent location with execute permission
+  ansible.builtin.copy:
+    src: '{{ rpiboot_repo.path }}/rpiboot/rpiboot'
+    dest: /usr/local/bin/rpiboot
+    mode: +x
+  when: not rpiboot_installed.stat.exists and rpiboot_built.stat.exists
+
+- name: Cleanup the temporary node config directory now that we're done
+  file:
+    path: '{{ rpiboot_repo.path }}'
+    state: absent
+  when: rpiboot_repo.path is defined

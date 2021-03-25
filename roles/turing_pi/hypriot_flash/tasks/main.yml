@@ -1,0 +1,21 @@
+---
+- name: Check if hypriot flash is installed
+  stat:
+    path: /usr/local/bin/flash
+  register: flash_installed
+
+- name: Install helper packages
+  community.general.homebrew:
+    name: '{{ item }}'
+    state: present
+  with_items:
+  - pv
+  - awscli
+  when: not flash_installed.stat.exists
+
+- name: Install hypriot flash
+  get_url:
+    url: '{{ hypriot_flash_url }}'
+    dest: /usr/local/bin/flash
+    mode: +x
+  when: not flash_installed.stat.exists

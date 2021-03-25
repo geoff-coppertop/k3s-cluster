@@ -1,0 +1,27 @@
+#cloud-config
+# vim: syntax=yaml
+#
+
+# Set your hostname here, the manage_etc_hosts will update the hosts file entries as well
+hostname: {{ hostname }}
+manage_etc_hosts: true
+# don't write debian.org into apt mirrors
+apt_preserve_sources_list: true
+
+users:
+- name: {{ username }}
+  shell: /bin/bash
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  groups: users,docker,adm,dialout,audio,plugdev,netdev,video
+  lock_passwd: true
+  ssh-authorized-keys:
+{% for gh_key_data in gh_ssh_keys_req.json %}
+  - {{ gh_key_data.key }}
+{% endfor %}
+
+package_upgrade: false
+
+# These commands will be ran once on first boot only
+runcmd:
+# Pickup the hostname changes
+- 'systemctl restart avahi-daemon'

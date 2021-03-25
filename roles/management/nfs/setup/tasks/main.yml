@@ -13,18 +13,3 @@
     namespace: nfs
     create_namespace: true
     wait: true
-
-# - name: Git clone nfs-provisioner with fixed pathpattern support
-#   ansible.builtin.git:
-#     repo: https://github.com/ariksidney/nfs-subdir-external-provisioner.git
-#     version: helm-pathpattern-support
-#     dest: /tmp/nfs_repo
-
-# - name: Deploy nfs-provisioner chart from local path
-#   community.kubernetes.helm:
-#     name: nfs-provisioner
-#     chart_ref: /tmp/nfs_repo/charts/nfs-subdir-external-provisioner
-#     values: "{{ lookup('template', '01-chart-values.yml') | from_yaml }}"
-#     namespace: nfs
-#     wait: true
-#     create_namespace: true

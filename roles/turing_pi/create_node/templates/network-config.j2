@@ -1,0 +1,16 @@
+version: 1
+config:
+- type: physical
+  name: eth0
+  subnets:
+  - type: static
+    address: {{ node_ip }}/24
+    gateway: {{ gateway_ip }}
+    dns_nameservers:
+{% for nameserver in nameservers %}
+    - {{ nameserver }}
+{% endfor %}
+    dns_search:
+{% for search_dmoain in search_domains %}
+    - {{ search_dmoain }}
+{% endfor %}
