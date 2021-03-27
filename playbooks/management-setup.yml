@@ -1,11 +1,25 @@
 ---
+- hosts: cluster
+  become: true
+  tasks:
+  - name: Install NFS Packages
+    apt:
+      name:
+      - nfs-common
+      state: present
+    register: nfs_common_installed
+  - name: Reboot the server and wait for it to come back up.
+    reboot:
+    when: nfs_common_installed.changed
+
 - hosts: local
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
   roles:
+  - helm
+  - management/nfs/setup
   - management/metallb/setup
   - management/dns/setup
   - management/dns/unbound/setup
-  - helm
   - management/traefik/setup
   - management/dns/pihole/setup

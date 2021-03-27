@@ -6,4 +6,9 @@
   become: true
   roles:
   - geoff_coppertop.k3s_roles.reset
-  - reboot
+
+- hosts: cluster
+  become: true
+  tasks:
+  - name: Reboot the server and wait for it to come back up.
+    reboot:
