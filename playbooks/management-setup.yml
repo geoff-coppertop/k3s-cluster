@@ -23,3 +23,7 @@
   - management/dns/unbound/setup
   - management/traefik/setup
   - management/dns/pihole/setup
+  - management/monitoring/setup
+  - management/monitoring/influxdb/setup
+  - management/monitoring/telegraf/setup
+  - management/monitoring/grafana/setup

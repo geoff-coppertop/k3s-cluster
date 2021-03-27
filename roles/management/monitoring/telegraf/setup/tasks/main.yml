@@ -1,0 +1,16 @@
+---
+- name: Add Influx Data helm repo
+  community.kubernetes.helm_repository:
+    name: influxdata
+    repo_url: https://helm.influxdata.com/
+
+- name: Deploy Telegraf-DS chart
+  community.kubernetes.helm:
+    name: telegraf-ds
+    chart_ref: influxdata/telegraf-ds
+    chart_version: 1.0.20
+    values: "{{ lookup('template', '00-chart-values.yml') | from_yaml }}"
+    release_namespace: monitoring
+    update_repo_cache: true
+    create_namespace: true
+    wait: true

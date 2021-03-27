@@ -1,0 +1,13 @@
+---
+config:
+  http:
+    auth-enabled: true
+image:
+  tag: 1.8.4
+persistence:
+  storageClass: nfs-client
+setDefaultUser:
+  enabled: true
+  image: curlimages/curl
+  user:
+    existingSecret: influx-admin

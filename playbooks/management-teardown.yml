@@ -3,6 +3,10 @@
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
   roles:
+  - management/monitoring/grafana/teardown
+  - management/monitoring/telegraf/teardown
+  - management/monitoring/influxdb/teardown
+  - management/monitoring/teardown
   - management/dns/pihole/teardown
   - management/traefik/teardown
   - management/dns/teardown

@@ -1,0 +1,8 @@
+---
+- name: Remove grafana release
+  community.kubernetes.helm:
+    name: grafana
+    purge: true
+    release_namespace: monitoring
+    state: absent
+    wait: true
