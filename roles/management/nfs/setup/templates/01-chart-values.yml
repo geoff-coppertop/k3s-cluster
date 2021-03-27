@@ -3,8 +3,7 @@ nfs:
   server: '{{ nfs_server_addr }}'
   path: '{{ nfs_server_path }}'
 image:
-  repository: coppertopgeoff/nfs-subdir-external-provisioner
-  tag: arm-linux-canary
+  tag: v4.0.2
 storageClass:
   pathPattern: ${.PVC.namespace}/${.PVC.name}
   archiveOnDelete: false
