@@ -1,0 +1,23 @@
+---
+- name: Remove nfs-provisioner release
+  community.kubernetes.helm:
+    name: nfs-provisioner
+    purge: true
+    namespace: storage
+    state: absent
+    wait: true
+
+- name: Remove nfs-provisioner repo
+  community.kubernetes.helm_repository:
+    name: nfs-provisioner
+    state: absent
+
+# ------------------------------------------------------------------------------
+
+- name: Delete the Storage namespace
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: absent
+    wait: true
+  with_items:
+  - {type: template, path: 00-namespace.yml}
