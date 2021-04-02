@@ -99,7 +99,7 @@
   gather_facts: true
 
   roles:
-  - role: turing_pi/rpi_boot
+  - role: raspberrypi/rpi_boot
     when: run_rpi_boot is truthy(convert_bool=True)
-  - role: turing_pi/hypriot_flash
-  - role: turing_pi/create_node
+  - role: raspberrypi/hypriot_flash
+  - role: raspberrypi/create_node

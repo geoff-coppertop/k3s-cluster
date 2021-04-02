@@ -1,3 +1,0 @@
----
-- import_playbook: management-destroy.yml
-- import_playbook: management-create.yml

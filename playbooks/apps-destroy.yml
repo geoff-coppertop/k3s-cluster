@@ -1,9 +1,15 @@
 ---
+- hosts: master
+  become: true
+  roles:
+  - cluster_control
+
 - hosts: local
   vars:
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
     teardown: true
   roles:
+  - helm
   - monitoring
   - networking
   - storage

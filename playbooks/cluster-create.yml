@@ -14,17 +14,22 @@
   - geoff_coppertop.k3s_roles.prereq
   - geoff_coppertop.k3s_roles.download
   - geoff_coppertop.k3s_roles.raspberrypi
-  - turing_pi/setup
+  - cluster_packages
+
+- hosts: turing_pi
+  become: true
+  gather_facts: true
+  roles:
+  - turing_pi
 
 - hosts: master
   become: true
   roles:
   - geoff_coppertop.k3s_roles.k3s.master
-  - control
 
 - hosts: node
   become: true
   roles:
   - geoff_coppertop.k3s_roles.k3s.node
 
-- import_playbook: management-setup.yml
+- import_playbook: apps-create.yml
