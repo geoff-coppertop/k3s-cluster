@@ -5,3 +5,4 @@
   roles:
   - storage
   - networking
+  - monitoring

@@ -1,8 +1,0 @@
----
-- name: Remove Telegraf-DS release
-  community.kubernetes.helm:
-    name: telegraf-ds
-    purge: true
-    release_namespace: monitoring
-    state: absent
-    wait: true

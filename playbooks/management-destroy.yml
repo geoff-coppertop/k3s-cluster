@@ -4,5 +4,6 @@
     ansible_python_interpreter: '{{ ansible_playbook_python }}'
     teardown: true
   roles:
+  - monitoring
   - networking
   - storage
