@@ -1,0 +1,53 @@
+---
+- name: Remove pihole release
+  community.kubernetes.helm:
+    name: pihole
+    purge: true
+    release_namespace: networking
+    state: absent
+    wait: true
+
+- name: Remove pihole helm repo
+  community.kubernetes.helm_repository:
+    name: pihole
+    state: absent
+
+# ------------------------------------------------------------------------------
+
+- name: Remove traefik release
+  community.kubernetes.helm:
+    name: traefik
+    purge: true
+    release_namespace: networking
+    state: absent
+    wait: true
+
+- name: Remove metallb helm repo
+  community.kubernetes.helm_repository:
+    name: traefik
+    state: absent
+
+# ------------------------------------------------------------------------------
+
+- name: Remove metallb release
+  community.kubernetes.helm:
+    name: metallb
+    purge: true
+    release_namespace: networking
+    state: absent
+    wait: true
+
+- name: Remove metallb helm repo
+  community.kubernetes.helm_repository:
+    name: bitnami
+    state: absent
+
+# ------------------------------------------------------------------------------
+
+- name: Delete the Networking namespace
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: absent
+    wait: true
+  with_items:
+  - {type: template, path: 00-namespace.yml}

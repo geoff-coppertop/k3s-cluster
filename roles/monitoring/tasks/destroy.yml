@@ -1,0 +1,50 @@
+---
+- name: Remove grafana release
+  community.kubernetes.helm:
+    name: grafana
+    purge: true
+    namespace: monitoring
+    state: absent
+    wait: true
+
+- name: Remove grafana repo
+  community.kubernetes.helm_repository:
+    name: grafana
+    state: absent
+
+# ------------------------------------------------------------------------------
+
+- name: Remove Telegraf-DS release
+  community.kubernetes.helm:
+    name: telegraf-ds
+    purge: true
+    namespace: monitoring
+    state: absent
+    wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Remove InfluxDB release
+  community.kubernetes.helm:
+    name: influxdb
+    purge: true
+    namespace: monitoring
+    state: absent
+    wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Remove Influx Data repo
+  community.kubernetes.helm_repository:
+    name: influxdata
+    state: absent
+
+# ------------------------------------------------------------------------------
+
+- name: Delete the monitoring namespace
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: absent
+    wait: true
+  with_items:
+  - {type: template, path: 00-namespace.yml}

@@ -47,3 +47,18 @@ cloudflare_api_key: 66c7bbbb8888a99aaa9b8c7d6b90e1375b92c
 # Pihole
 pihole_addr: 192.168.1.71
 pihole_web_password: admin
+
+# InfluxDB
+influxdb_username: admin
+influxdb_password: admin
+
+# Telegraf-DS (Cluster)
+telegraf_cluster_db: cluster
+telegraf_cluster_db_user: telegraf_cluster
+telegraf_cluster_db_pass: telegraf_cluster
+
+# Grafana
+grafana_admin_user: grafana
+grafana_admin_password: grafana
+grafana_db_user: grafana
+grafana_db_pass: grafana

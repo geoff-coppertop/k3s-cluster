@@ -1,0 +1,100 @@
+---
+- name: Setup the Networking namespace
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: 00-namespace.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Add metallb helm repo
+  community.kubernetes.helm_repository:
+    name: bitnami
+    repo_url: https://charts.bitnami.com/bitnami
+    state: present
+
+- name: Deploy metallb chart
+  community.kubernetes.helm:
+    name: metallb
+    chart_ref: bitnami/metallb
+    chart_version: 2.3.5
+    values: "{{ lookup('template', 'metallb/01-chart-values.yml') | from_yaml }}"
+    release_namespace: networking
+    update_repo_cache: true
+    wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Setup Unbound
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: unbound/01-configmap.yml}
+  - {type: template, path: unbound/02-service-tcp.yml}
+  - {type: template, path: unbound/03-service-udp.yml}
+  - {type: template, path: unbound/04-deployment.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Start Traefik setup
+  k8s:
+    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: traefik/01-secret-cloudflare.yml}
+
+- name: Add Traefik helm repo
+  community.kubernetes.helm_repository:
+    name: traefik
+    repo_url: https://helm.traefik.io/traefik
+
+- name: Deploy Traefik chart on 9.13.0 with values loaded from template
+  community.kubernetes.helm:
+    name: traefik
+    chart_ref: traefik/traefik
+    chart_version: 9.13.0
+    values: "{{ lookup('template', 'traefik/02-chart-values.j2') | from_yaml }}"
+    release_namespace: networking
+    update_repo_cache: true
+    wait: true
+
+- name: Finish Traefik setup
+  k8s:
+    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: traefik/03-secret-dashboard.yml}
+  - {type: template, path: traefik/04-middleware.yml}
+  - {type: template, path: traefik/05-ingress.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Add pihole helm repo
+  community.kubernetes.helm_repository:
+    name: pihole
+    repo_url: https://mojo2600.github.io/pihole-kubernetes
+
+- name: Deploy pihole chart
+  community.kubernetes.helm:
+    name: pihole
+    chart_ref: pihole/pihole
+    chart_version: 1.8.29
+    values: "{{ lookup('template', 'pihole/01-chart-values.yml') | from_yaml }}"
+    release_namespace: networking
+    update_repo_cache: true
+    wait: true
+
+- name: Finish pihole setup
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: pihole/02-middleware.yml}
+  - {type: template, path: pihole/03-ingress.yml}

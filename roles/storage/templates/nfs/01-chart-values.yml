@@ -1,0 +1,10 @@
+---
+nfs:
+  server: '{{ nfs_server_addr }}'
+  path: '{{ nfs_server_path }}'
+image:
+  tag: v4.0.2
+storageClass:
+  pathPattern: ${.PVC.namespace}/${.PVC.name}
+  archiveOnDelete: false
+  reclaimPolicy: Retain
