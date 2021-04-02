@@ -1,12 +1,9 @@
 ---
 adminPassword: '{{ pihole_web_password }}'
-
-extraEnvVars:
-  TZ: '{{ timezone }}'
-
 DNS1: '{{ unbound_addr }}'
 DNS2: 127.0.0.1
-
+extraEnvVars:
+  TZ: '{{ timezone }}'
 serviceDns:
   loadBalancerIP: '{{ pihole_addr }}'
   annotations:

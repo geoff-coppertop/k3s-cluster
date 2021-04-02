@@ -1,4 +1,19 @@
 ---
+- name: Remove pihole release
+  community.kubernetes.helm:
+    name: pihole
+    purge: true
+    release_namespace: networking
+    state: absent
+    wait: true
+
+- name: Remove pihole helm repo
+  community.kubernetes.helm_repository:
+    name: pihole
+    state: absent
+
+# ------------------------------------------------------------------------------
+
 - name: Remove traefik release
   community.kubernetes.helm:
     name: traefik

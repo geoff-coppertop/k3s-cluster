@@ -48,7 +48,7 @@
   with_items:
   - {type: template, path: traefik/01-secret-cloudflare.yml}
 
-- name: Add helm repo
+- name: Add Traefik helm repo
   community.kubernetes.helm_repository:
     name: traefik
     repo_url: https://helm.traefik.io/traefik
@@ -72,3 +72,29 @@
   - {type: template, path: traefik/03-secret-dashboard.yml}
   - {type: template, path: traefik/04-middleware.yml}
   - {type: template, path: traefik/05-ingress.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Add pihole helm repo
+  community.kubernetes.helm_repository:
+    name: pihole
+    repo_url: https://mojo2600.github.io/pihole-kubernetes
+
+- name: Deploy pihole chart
+  community.kubernetes.helm:
+    name: pihole
+    chart_ref: pihole/pihole
+    chart_version: 1.8.29
+    values: "{{ lookup('template', 'pihole/01-chart-values.yml') | from_yaml }}"
+    release_namespace: networking
+    update_repo_cache: true
+    wait: true
+
+- name: Finish pihole setup
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: pihole/02-middleware.yml}
+  - {type: template, path: pihole/03-ingress.yml}

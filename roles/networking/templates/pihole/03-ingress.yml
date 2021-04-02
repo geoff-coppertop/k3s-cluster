@@ -3,7 +3,7 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: pihole-ingress
-  namespace: dns-system
+  namespace: networking
 spec:
   entryPoints:
   - websecure
@@ -12,7 +12,7 @@ spec:
     kind: Rule
     middlewares:
     - name: addprefix
-      namespace: dns-system
+      namespace: networking
     services:
     - name: pihole-web
       port: 80
