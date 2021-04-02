@@ -1,4 +1,19 @@
 ---
+- name: Remove traefik release
+  community.kubernetes.helm:
+    name: traefik
+    purge: true
+    release_namespace: networking
+    state: absent
+    wait: true
+
+- name: Remove metallb helm repo
+  community.kubernetes.helm_repository:
+    name: traefik
+    state: absent
+
+# ------------------------------------------------------------------------------
+
 - name: Remove metallb release
   community.kubernetes.helm:
     name: metallb
