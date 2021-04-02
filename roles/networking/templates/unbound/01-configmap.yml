@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+data:
+  a-records.conf: |
+    # A Record
+        local-data: "{{ domain_name }} A {{ traefik_addr }}"
+        local-zone: "{{ domain_name }}" redirect
+
+    # PTR Record
+        local-data-ptr: "{{ traefik_addr }} {{ domain_name }}"
+kind: ConfigMap
+metadata:
+  name: unbound-a-records
+  namespace: networking

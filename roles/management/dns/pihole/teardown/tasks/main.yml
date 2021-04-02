@@ -1,8 +1,0 @@
----
-- name: Remove pihole release
-  community.kubernetes.helm:
-    name: pihole
-    purge: true
-    release_namespace: dns-system
-    state: absent
-    wait: true

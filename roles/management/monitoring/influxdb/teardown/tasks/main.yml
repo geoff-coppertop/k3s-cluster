@@ -1,8 +1,0 @@
----
-- name: Remove InfluxDB release
-  community.kubernetes.helm:
-    name: influxdb
-    purge: true
-    release_namespace: monitoring
-    state: absent
-    wait: true
