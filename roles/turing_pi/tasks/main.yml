@@ -1,0 +1,84 @@
+---
+- name: Config Path When Distro is Ubuntu for ARM
+  set_fact:
+    config_path: /boot/firmware/config.txt
+  when:
+  - ansible_facts.distribution is search("Ubuntu")
+  - raspberry_pi | default(false)
+
+- name: Config Path When Distro is Raspbian
+  set_fact:
+    config_path: /boot/config.txt
+  when:
+  - detected_distribution | default("") == "Raspbian"
+  - raspberry_pi | default(false)
+
+- name: Enable I2C
+  lineinfile:
+    line: dtparam=i2c_arm=on
+    regexp: dtparam(\s)*=(\s)*i2c_arm
+    state: present
+    insertafter: EOF
+    path: '{{ config_path }}'
+  when:
+  - raspberry_pi | default(false)
+
+- name: Setup I2C-1
+  lineinfile:
+    line: dtoverlay=i2c1,pins_44_45
+    regexp: dtoverlay(\s)*=(\s)*i2c1
+    state: present
+    insertafter: EOF
+    path: '{{ config_path }}'
+  when:
+  - raspberry_pi | default(false)
+
+- name: Enable I2C-1
+  lineinfile:
+    line: dtparam=i2c1=on
+    regexp: dtparam(\s)*=(\s)*i2c1
+    state: present
+    insertafter: EOF
+    path: '{{ config_path }}'
+  when:
+  - raspberry_pi | default(false)
+
+- name: Enable I2C RTC
+  lineinfile:
+    line: dtoverlay=i2c-rtc,mcp7940x
+    regexp: dtoverlay(\s)*=(\s)*i2c-rtc
+    state: present
+    insertafter: EOF
+    path: '{{ config_path }}'
+  when:
+  - raspberry_pi | default(false)
+
+- name: Enable I2C device module
+  lineinfile:
+    line: i2c-dev
+    regexp: i2c-dev
+    state: present
+    insertafter: EOF
+    path: /etc/modules
+  when:
+  - raspberry_pi | default(false)
+
+- name: Enable I2C peripheral module
+  lineinfile:
+    line: i2c-bcm2708
+    regexp: i2c-bcm2708
+    state: present
+    insertafter: EOF
+    path: /etc/modules
+  when:
+  - raspberry_pi | default(false)
+
+- name: Install I2C Packages
+  apt:
+    name:
+    - i2c-tools
+    - libi2c-dev
+    state: present
+  when:
+  - raspberry_pi | default(false)
+  notify: reboot

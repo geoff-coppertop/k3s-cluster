@@ -1,0 +1,17 @@
+---
+configInline:
+  address-pools:
+  - name: generic-cluster-pool
+    protocol: layer2
+    addresses:
+    - '{{ metallb_start_addr }}-{{ metallb_end_addr }}'
+controller:
+  image:
+    registry: quay.io
+    repository: metallb/controller
+    tag: '{{ metallb_version }}'
+speaker:
+  image:
+    registry: quay.io
+    repository: metallb/speaker
+    tag: '{{ metallb_version }}'
