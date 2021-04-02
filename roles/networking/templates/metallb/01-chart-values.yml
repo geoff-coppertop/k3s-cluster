@@ -9,9 +9,9 @@ controller:
   image:
     registry: quay.io
     repository: metallb/controller
-    tag: v0.9.6
+    tag: '{{ metallb_version }}'
 speaker:
   image:
     registry: quay.io
     repository: metallb/speaker
-    tag: v0.9.6
+    tag: '{{ metallb_version }}'

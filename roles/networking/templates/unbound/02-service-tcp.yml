@@ -4,15 +4,15 @@ kind: Service
 metadata:
   annotations:
     metallb.universe.tf/allow-shared-ip: unbound-svc
-  name: unbound-dns-udp
-  namespace: dns-system
+  name: unbound-dns-tcp
+  namespace: networking
 spec:
   loadBalancerIP: '{{ unbound_addr }}'
   ports:
   - port: 53
     targetPort: 5053
-    protocol: UDP
-    name: dns-udp
+    protocol: TCP
+    name: dns-tcp
   selector:
     app: unbound
   type: LoadBalancer

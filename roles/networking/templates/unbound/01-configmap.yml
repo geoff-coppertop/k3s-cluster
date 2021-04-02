@@ -11,4 +11,4 @@ data:
 kind: ConfigMap
 metadata:
   name: unbound-a-records
-  namespace: dns-system
+  namespace: networking

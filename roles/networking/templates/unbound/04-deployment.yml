@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: unbound
-  namespace: dns-system
+  namespace: networking
   labels:
     app: unbound
 spec:

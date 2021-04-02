@@ -7,10 +7,13 @@
   with_items:
   - {type: template, path: 00-namespace.yml}
 
+# ------------------------------------------------------------------------------
+
 - name: Add metallb helm repo
   community.kubernetes.helm_repository:
     name: bitnami
     repo_url: https://charts.bitnami.com/bitnami
+    state: present
 
 - name: Deploy metallb chart
   community.kubernetes.helm:
@@ -21,3 +24,18 @@
     release_namespace: networking
     update_repo_cache: true
     wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Setup Unbound
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  with_items:
+  - {type: template, path: unbound/01-configmap.yml}
+  - {type: template, path: unbound/02-service-tcp.yml}
+  - {type: template, path: unbound/03-service-udp.yml}
+  - {type: template, path: unbound/04-deployment.yml}
+
+# ------------------------------------------------------------------------------
