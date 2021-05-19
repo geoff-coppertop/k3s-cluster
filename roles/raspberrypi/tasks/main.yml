@@ -1,0 +1,25 @@
+---
+- name: Config Path When Distro is Ubuntu for ARM
+  set_fact:
+    config_path: /boot/firmware/config.txt
+  when:
+  - ansible_facts.distribution is search("Ubuntu")
+  - raspberry_pi | default(false)
+
+- name: Config Path When Distro is Raspbian
+  set_fact:
+    config_path: /boot/config.txt
+  when:
+  - detected_distribution | default("") == "Raspbian"
+  - raspberry_pi | default(false)
+
+- name: Turn down GPU memory
+  lineinfile:
+    line: gpu_mem=16
+    regexp: gpu_mem(\s)*=(\s)*(\d)*
+    state: present
+    insertafter: EOF
+    path: '{{ config_path }}'
+  when:
+  - raspberry_pi | default(false)
+  notify: reboot
