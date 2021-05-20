@@ -15,6 +15,7 @@
   - geoff_coppertop.k3s_roles.download
   - geoff_coppertop.k3s_roles.raspberrypi
   - cluster_packages
+  - raspberry_pi
 
 - hosts: turing_pi
   become: true
