@@ -1,4 +1,19 @@
 ---
+- name: Remove postgresql release
+  community.kubernetes.helm:
+    name: postgresql
+    purge: true
+    namespace: data
+    state: absent
+    wait: true
+
+- name: Remove postgresql repo
+  community.kubernetes.helm_repository:
+    name: postgresql
+    state: absent
+
+# ------------------------------------------------------------------------------
+
 - name: Remove grafana release
   community.kubernetes.helm:
     name: grafana

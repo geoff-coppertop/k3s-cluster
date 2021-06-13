@@ -140,3 +140,21 @@
     release_namespace: data
     update_repo_cache: true
     wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Add postgresql helm repo
+  community.kubernetes.helm_repository:
+    name: postgresql
+    repo_url: https://charts.bitnami.com/bitnami
+    state: present
+
+- name: Deploy postgresql chart
+  community.kubernetes.helm:
+    name: postgresql
+    chart_ref: postgresql/postgresql
+    chart_version: 10.4.8
+    values: "{{ lookup('template', 'postgresql/db/01-chart-values.yml') | from_yaml }}"
+    release_namespace: data
+    update_repo_cache: true
+    wait: true
