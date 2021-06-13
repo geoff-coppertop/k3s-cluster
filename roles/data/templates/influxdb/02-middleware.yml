@@ -3,9 +3,9 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:
   name: influxdb-strip
-  namespace: monitoring
+  namespace: data
 
 spec:
   stripPrefix:
     prefixes:
-    - /db
+    - /influx

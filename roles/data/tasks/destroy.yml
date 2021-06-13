@@ -3,7 +3,7 @@
   community.kubernetes.helm:
     name: grafana
     purge: true
-    namespace: monitoring
+    namespace: data
     state: absent
     wait: true
 
@@ -18,7 +18,7 @@
   community.kubernetes.helm:
     name: telegraf-ds
     purge: true
-    namespace: monitoring
+    namespace: data
     state: absent
     wait: true
 
@@ -28,7 +28,7 @@
   community.kubernetes.helm:
     name: influxdb
     purge: true
-    namespace: monitoring
+    namespace: data
     state: absent
     wait: true
 
@@ -41,7 +41,7 @@
 
 # ------------------------------------------------------------------------------
 
-- name: Delete the monitoring namespace
+- name: Delete the data namespace
   k8s:
     definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
     state: absent
