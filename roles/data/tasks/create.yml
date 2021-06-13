@@ -158,3 +158,16 @@
     release_namespace: data
     update_repo_cache: true
     wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Setup Postgres admin
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: postgresql/admin/00-secret.yml}
+  - {type: template, path: postgresql/admin/01-service.yml}
+  - {type: template, path: postgresql/admin/02-ingress.yml}
+  - {type: template, path: postgresql/admin/03-deployment.yml}

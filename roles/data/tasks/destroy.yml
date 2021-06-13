@@ -1,4 +1,15 @@
 ---
+- name: Remove Postgres admin
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: absent
+    wait: true
+  loop:
+  - {type: template, path: postgresql/admin/00-secret.yml}
+  - {type: template, path: postgresql/admin/01-service.yml}
+  - {type: template, path: postgresql/admin/02-ingress.yml}
+  - {type: template, path: postgresql/admin/03-deployment.yml}
+
 - name: Remove postgresql release
   community.kubernetes.helm:
     name: postgresql
