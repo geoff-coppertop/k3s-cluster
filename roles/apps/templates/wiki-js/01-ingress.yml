@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: wikijs
+  namespace: apps
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`wiki.{{ domain_name }}`)
+    kind: Rule
+    services:
+    - name: wikijs
+      port: 80
