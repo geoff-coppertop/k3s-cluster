@@ -6,3 +6,36 @@
     wait: true
   loop:
   - {type: template, path: 00-namespace.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Setup DB for kanboard
+  community.postgresql.postgresql_db:
+    name: kanboard
+    state: present
+    maintenance_db: postgres
+    login_host: '{{ postgresql_addr }}'
+    login_user: postgres
+    login_password: '{{ postgresql_admin_password }}'
+
+- name: Setup user for kanboard
+  community.postgresql.postgresql_user:
+    db: kanboard
+    priv: ALL
+    name: kanboard
+    password: kanboard
+    state: present
+    login_host: '{{ postgresql_addr }}'
+    login_user: postgres
+    login_password: '{{ postgresql_admin_password }}'
+
+- name: Setup kanboard
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: kanboard/00-service.yml}
+  - {type: template, path: kanboard/01-ingress.yml}
+  - {type: template, path: kanboard/02-pvc.yml}
+  - {type: template, path: kanboard/03-deployment.yml}
