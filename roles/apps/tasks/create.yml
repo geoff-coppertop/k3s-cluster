@@ -1,0 +1,86 @@
+---
+- name: Setup the apps namespace
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: 00-namespace.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Setup DB for kanboard
+  community.postgresql.postgresql_db:
+    name: kanboard
+    state: present
+    maintenance_db: postgres
+    login_host: '{{ postgresql_addr }}'
+    login_user: postgres
+    login_password: '{{ postgresql_admin_password }}'
+
+- name: Setup user for kanboard
+  community.postgresql.postgresql_user:
+    db: kanboard
+    priv: ALL
+    name: kanboard
+    password: kanboard
+    state: present
+    login_host: '{{ postgresql_addr }}'
+    login_user: postgres
+    login_password: '{{ postgresql_admin_password }}'
+
+- name: Setup kanboard
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: kanboard/00-service.yml}
+  - {type: template, path: kanboard/01-ingress.yml}
+  - {type: template, path: kanboard/02-pvc.yml}
+  - {type: template, path: kanboard/03-deployment.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Setup DB for wiki-js
+  community.postgresql.postgresql_db:
+    name: wikijs
+    state: present
+    maintenance_db: postgres
+    login_host: '{{ postgresql_addr }}'
+    login_user: postgres
+    login_password: '{{ postgresql_admin_password }}'
+
+- name: Setup user for wiki-js
+  community.postgresql.postgresql_user:
+    db: wikijs
+    priv: ALL
+    name: wikijs
+    password: wikijs
+    state: present
+    login_host: '{{ postgresql_addr }}'
+    login_user: postgres
+    login_password: '{{ postgresql_admin_password }}'
+
+- name: Setup wiki-js
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: wiki-js/00-service.yml}
+  - {type: template, path: wiki-js/01-ingress.yml}
+  - {type: template, path: wiki-js/02-deployment.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Setup homer
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: homer/00-service.yml}
+  - {type: template, path: homer/01-ingress.yml}
+  - {type: template, path: homer/02-pvc.yml}
+  - {type: template, path: homer/03-deployment.yml}
