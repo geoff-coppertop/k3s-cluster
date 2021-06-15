@@ -1,0 +1,6 @@
+---
+- include_tasks: create.yml
+  when: not teardown|default(false)
+
+- include_tasks: destroy.yml
+  when: teardown|default(false)

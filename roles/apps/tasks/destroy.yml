@@ -1,0 +1,8 @@
+---
+- name: Delete the apps namespace
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: absent
+    wait: true
+  with_items:
+  - {type: template, path: 00-namespace.yml}
