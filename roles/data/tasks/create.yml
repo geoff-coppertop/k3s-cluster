@@ -1,5 +1,5 @@
 ---
-- name: Setup the monitoring namespace
+- name: Setup the data namespace
   k8s:
     definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
     state: present
@@ -28,7 +28,7 @@
     chart_ref: influxdata/influxdb
     chart_version: 4.9.14
     values: "{{ lookup('template', 'influxdb/01-chart-values.yml') | from_yaml }}"
-    release_namespace: monitoring
+    release_namespace: data
     update_repo_cache: true
     wait: true
 
@@ -43,7 +43,7 @@
 
 - name: Pause play until the InfluxDB URL is reachable from this host
   uri:
-    url: https://monitoring.{{ domain_name }}/db/health
+    url: https://data.{{ domain_name }}/influx/health
     method: GET
     validate_certs: false
   register: _result
@@ -53,8 +53,8 @@
 
 - name: Setup InfluxDB databases
   community.general.influxdb_database:
-    hostname: monitoring.{{ domain_name }}
-    path: /db
+    hostname: data.{{ domain_name }}
+    path: /influx
     port: 443
     ssl: true
     validate_certs: false
@@ -70,8 +70,8 @@
     user_password: '{{ item.pass }}'
     login_username: '{{ influxdb_username }}'
     login_password: '{{ influxdb_password }}'
-    hostname: monitoring.{{ domain_name }}
-    path: /db
+    hostname: data.{{ domain_name }}
+    path: /influx
     port: 443
     ssl: true
     validate_certs: false
@@ -79,8 +79,10 @@
     - database: '{{ item.database }}'
       privilege: '{{ item.privilege }}'
   with_items:
-  # yamllint disable-line rule:line-length
-  - {user: '{{ telegraf_cluster_db_user }}', pass: '{{ telegraf_cluster_db_pass }}', privilege: WRITE, database: '{{ telegraf_cluster_db }}'}
+  - user: '{{ telegraf_cluster_db_user }}'
+    pass: '{{ telegraf_cluster_db_pass }}'
+    privilege: WRITE
+    database: '{{ telegraf_cluster_db }}'
 
 - name: Create InfluxDB user for grafana with read privilege
   community.general.influxdb_user:
@@ -88,8 +90,8 @@
     user_password: '{{ grafana_db_pass }}'
     login_username: '{{ influxdb_username }}'
     login_password: '{{ influxdb_password }}'
-    hostname: monitoring.{{ domain_name }}
-    path: /db
+    hostname: data.{{ domain_name }}
+    path: /influx
     port: 443
     ssl: true
     validate_certs: false
@@ -110,7 +112,7 @@
     chart_ref: influxdata/telegraf-ds
     chart_version: 1.0.20
     values: "{{ lookup('template', 'telegraf/00-chart-values.yml') | from_yaml }}"
-    release_namespace: monitoring
+    release_namespace: data
     update_repo_cache: true
     wait: true
 
@@ -135,6 +137,37 @@
     chart_ref: grafana/grafana
     chart_version: 6.4.6
     values: "{{ lookup('template', 'grafana/01-chart-values.yml') | from_yaml }}"
-    release_namespace: monitoring
+    release_namespace: data
     update_repo_cache: true
     wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Add postgresql helm repo
+  community.kubernetes.helm_repository:
+    name: postgresql
+    repo_url: https://charts.bitnami.com/bitnami
+    state: present
+
+- name: Deploy postgresql chart
+  community.kubernetes.helm:
+    name: postgresql
+    chart_ref: postgresql/postgresql
+    chart_version: 10.4.8
+    values: "{{ lookup('template', 'postgresql/db/01-chart-values.yml') | from_yaml }}"
+    release_namespace: data
+    update_repo_cache: true
+    wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Setup Postgres admin
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: postgresql/admin/00-secret.yml}
+  - {type: template, path: postgresql/admin/01-service.yml}
+  - {type: template, path: postgresql/admin/02-ingress.yml}
+  - {type: template, path: postgresql/admin/03-deployment.yml}

@@ -1,0 +1,27 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-admin
+  namespace: data
+  labels:
+    app: postgres-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-admin
+  template:
+    metadata:
+      labels:
+        app: postgres-admin
+    spec:
+      containers:
+      - name: pgadmin4
+        image: dpage/pgadmin4:2021-05-18-1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        envFrom:
+        - secretRef:
+            name: postgres-admin

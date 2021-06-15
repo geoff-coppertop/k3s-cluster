@@ -3,7 +3,7 @@ config:
   outputs:
   - influxdb:
       urls:
-      - http://influxdb.monitoring.svc:8086
+      - http://influxdb.data.svc:8086
       database: '{{ telegraf_cluster_db }}'
       username: '{{ telegraf_cluster_db_user }}'
       password: '{{ telegraf_cluster_db_user }}'

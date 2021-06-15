@@ -1,9 +1,35 @@
 ---
+- name: Remove Postgres admin
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: absent
+    wait: true
+  loop:
+  - {type: template, path: postgresql/admin/00-secret.yml}
+  - {type: template, path: postgresql/admin/01-service.yml}
+  - {type: template, path: postgresql/admin/02-ingress.yml}
+  - {type: template, path: postgresql/admin/03-deployment.yml}
+
+- name: Remove postgresql release
+  community.kubernetes.helm:
+    name: postgresql
+    purge: true
+    namespace: data
+    state: absent
+    wait: true
+
+- name: Remove postgresql repo
+  community.kubernetes.helm_repository:
+    name: postgresql
+    state: absent
+
+# ------------------------------------------------------------------------------
+
 - name: Remove grafana release
   community.kubernetes.helm:
     name: grafana
     purge: true
-    namespace: monitoring
+    namespace: data
     state: absent
     wait: true
 
@@ -18,7 +44,7 @@
   community.kubernetes.helm:
     name: telegraf-ds
     purge: true
-    namespace: monitoring
+    namespace: data
     state: absent
     wait: true
 
@@ -28,7 +54,7 @@
   community.kubernetes.helm:
     name: influxdb
     purge: true
-    namespace: monitoring
+    namespace: data
     state: absent
     wait: true
 
@@ -41,7 +67,7 @@
 
 # ------------------------------------------------------------------------------
 
-- name: Delete the monitoring namespace
+- name: Delete the data namespace
   k8s:
     definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
     state: absent

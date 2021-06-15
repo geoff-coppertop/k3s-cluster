@@ -3,16 +3,16 @@ apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: influxdb
-  namespace: monitoring
+  namespace: data
 spec:
   entryPoints:
   - websecure
   routes:
-  - match: Host(`monitoring.{{ domain_name }}`) && PathPrefix(`/db`)
+  - match: Host(`data.{{ domain_name }}`) && PathPrefix(`/influx`)
     kind: Rule
     middlewares:
     - name: influxdb-strip
-      namespace: monitoring
+      namespace: data
     services:
     - name: influxdb
       port: 8086

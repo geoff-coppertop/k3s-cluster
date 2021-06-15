@@ -1,11 +1,11 @@
 ---
 grafana.ini:
   server:
-    domain: monitoring.{{ domain_name }}
+    domain: data.{{ domain_name }}
 ingress:
   enabled: true
   hosts:
-  - monitoring.{{ domain_name }}
+  - data.{{ domain_name }}
 persistence:
   enabled: true
   storageClassName: nfs-client
@@ -22,7 +22,7 @@ datasources:
       access: proxy
       database: '{{ telegraf_cluster_db }}'
       user: '{{ grafana_db_user }}'
-      url: http://influxdb.monitoring.svc:8086
+      url: http://influxdb.data.svc:8086
       secureJsonData:
         password: '{{ grafana_db_pass }}'
       jsonData:
