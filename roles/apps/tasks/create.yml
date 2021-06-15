@@ -71,3 +71,16 @@
   - {type: template, path: wiki-js/00-service.yml}
   - {type: template, path: wiki-js/01-ingress.yml}
   - {type: template, path: wiki-js/02-deployment.yml}
+
+# ------------------------------------------------------------------------------
+
+- name: Setup homer
+  k8s:
+    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    state: present
+    wait: true
+  loop:
+  - {type: template, path: homer/00-service.yml}
+  - {type: template, path: homer/01-ingress.yml}
+  - {type: template, path: homer/02-pvc.yml}
+  - {type: template, path: homer/03-deployment.yml}
