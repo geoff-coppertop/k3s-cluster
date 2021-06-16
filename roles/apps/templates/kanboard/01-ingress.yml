@@ -8,7 +8,7 @@ spec:
   entryPoints:
   - websecure
   routes:
-  - match: Host(`kanboard.{{ domain_name }}`)
+  - match: Host(`task.{{ domain_name }}`)
     kind: Rule
     services:
     - name: kanboard
