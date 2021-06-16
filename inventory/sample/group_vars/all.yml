@@ -28,7 +28,7 @@ unbound_version: 1.13.1
 domain_name: example.com
 traefik_addr: 192.168.1.72
 traefik_admin_user: admin
-traefik_admin_password: admin
+traefik_admin_password: password
 
 # Helm
 helm_url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -52,17 +52,17 @@ pihole_web_password: admin
 
 # InfluxDB
 influxdb_username: admin
-influxdb_password: admin
+influxdb_password: password
 
 # Telegraf-DS (Cluster)
-telegraf_cluster_db: cluster
-telegraf_cluster_db_user: telegraf_cluster
-telegraf_cluster_db_pass: telegraf_cluster
+telegraf_cluster_db_name: cluster
+telegraf_cluster_db_user: admin
+telegraf_cluster_db_pass: password
 
 # Grafana
-grafana_admin_user: grafana
-grafana_admin_password: grafana
-grafana_db_user: grafana
+grafana_admin_user: admin
+grafana_admin_pass: password
+grafana_db_user: admin
 grafana_db_pass: grafana
 
 # PostgreSQL

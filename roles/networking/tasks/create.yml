@@ -86,12 +86,6 @@
   - traefik/05-middleware.yml
   - traefik/06-ingress.yml
 
-- name: Cleanup the temporary basic auth file for Traefik now that we're done
-  file:
-    path: '{{ basicAuthFile.path }}'
-    state: absent
-  when: basicAuthFile.path is defined
-
 # ------------------------------------------------------------------------------
 
 - name: Add pihole helm repo
