@@ -10,4 +10,4 @@ service:
 persistence:
   storageClass: nfs-client
 
-postgresqlPassword: '{{ postgresql_admin_password }}'
+postgresqlPassword: '{{ postgresql_admin_pass }}'
