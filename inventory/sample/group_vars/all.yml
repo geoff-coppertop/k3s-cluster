@@ -79,3 +79,6 @@ wikijs_db_name: wikijs
 kanboard_db_user: admin
 kanboard_db_pass: password
 kanboard_db_name: kanboard
+
+# Unifi
+unifi_appliance_url: https://192.168.1.1
