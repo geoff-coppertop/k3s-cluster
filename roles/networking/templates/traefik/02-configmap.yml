@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik
+  namespace: networking
+data:
+  config.yml: |
+    http:
+      routers:
+        unifi:
+          entryPoints:
+          - websecure
+          rule: "Host(`unifi.{{ domain_name }}`)"
+          service: "unifi"
+      services:
+        unifi:
+          loadBalancer:
+            servers:
+            - url: '{{ unifi_appliance_url }}'
+              scheme: "https"

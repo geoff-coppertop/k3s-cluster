@@ -2,7 +2,7 @@
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
-  name: traefik-dashboard
+  name: traefik
   namespace: networking
 spec:
   entryPoints:
@@ -11,7 +11,7 @@ spec:
   - match: Host(`traefik.{{ domain_name }}`)
     kind: Rule
     middlewares:
-    - name: traefik-dashboard-basicauth
+    - name: traefik-basicauth
       namespace: networking
     services:
     - name: api@internal

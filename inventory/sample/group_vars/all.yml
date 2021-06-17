@@ -27,6 +27,8 @@ unbound_version: 1.13.1
 # Traefik
 domain_name: example.com
 traefik_addr: 192.168.1.72
+traefik_admin_user: admin
+traefik_admin_password: admin
 
 # Helm
 helm_url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -77,3 +79,6 @@ wikijs_db_name: wikijs
 kanboard_db_user: admin
 kanboard_db_pass: password
 kanboard_db_name: kanboard
+
+# Unifi
+unifi_appliance_url: https://192.168.1.1
