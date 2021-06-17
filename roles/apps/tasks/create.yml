@@ -1,86 +1,86 @@
 ---
 - name: Setup the apps namespace
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup( 'template', '00-namespace.yml' ) | from_yaml }}"
     state: present
     wait: true
-  loop:
-  - {type: template, path: 00-namespace.yml}
 
 # ------------------------------------------------------------------------------
 
 - name: Setup DB for kanboard
   community.postgresql.postgresql_db:
-    name: kanboard
+    name: '{{ kanboard_db_name }}'
     state: present
     maintenance_db: postgres
     login_host: '{{ postgresql_addr }}'
     login_user: postgres
-    login_password: '{{ postgresql_admin_password }}'
+    login_password: '{{ postgresql_admin_pass }}'
 
 - name: Setup user for kanboard
   community.postgresql.postgresql_user:
-    db: kanboard
+    db: '{{ kanboard_db_name }}'
     priv: ALL
-    name: kanboard
-    password: kanboard
+    name: '{{ kanboard_db_user }}'
+    password: '{{ kanboard_db_pass }}'
     state: present
     login_host: '{{ postgresql_addr }}'
     login_user: postgres
-    login_password: '{{ postgresql_admin_password }}'
+    login_password: '{{ postgresql_admin_pass }}'
 
 - name: Setup kanboard
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
     state: present
     wait: true
   loop:
-  - {type: template, path: kanboard/00-service.yml}
-  - {type: template, path: kanboard/01-ingress.yml}
-  - {type: template, path: kanboard/02-pvc.yml}
-  - {type: template, path: kanboard/03-deployment.yml}
+  - kanboard/00-service.yml
+  - kanboard/01-ingress.yml
+  - kanboard/02-pvc.yml
+  - kanboard/03-secret.yml
+  - kanboard/04-deployment.yml
 
 # ------------------------------------------------------------------------------
 
 - name: Setup DB for wiki-js
   community.postgresql.postgresql_db:
-    name: wikijs
+    name: '{{ wikijs_db_name }}'
     state: present
     maintenance_db: postgres
     login_host: '{{ postgresql_addr }}'
     login_user: postgres
-    login_password: '{{ postgresql_admin_password }}'
+    login_password: '{{ postgresql_admin_pass }}'
 
 - name: Setup user for wiki-js
   community.postgresql.postgresql_user:
-    db: wikijs
+    db: '{{ wikijs_db_name }}'
     priv: ALL
-    name: wikijs
-    password: wikijs
+    name: '{{ wikijs_db_user }}'
+    password: '{{ wikijs_db_pass }}'
     state: present
     login_host: '{{ postgresql_addr }}'
     login_user: postgres
-    login_password: '{{ postgresql_admin_password }}'
+    login_password: '{{ postgresql_admin_pass }}'
 
 - name: Setup wiki-js
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
     state: present
     wait: true
   loop:
-  - {type: template, path: wiki-js/00-service.yml}
-  - {type: template, path: wiki-js/01-ingress.yml}
-  - {type: template, path: wiki-js/02-deployment.yml}
+  - wiki-js/00-service.yml
+  - wiki-js/01-ingress.yml
+  - wiki-js/02-secret.yml
+  - wiki-js/03-deployment.yml
 
 # ------------------------------------------------------------------------------
 
 - name: Setup homer
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
     state: present
     wait: true
   loop:
-  - {type: template, path: homer/00-service.yml}
-  - {type: template, path: homer/01-ingress.yml}
-  - {type: template, path: homer/02-pvc.yml}
-  - {type: template, path: homer/03-deployment.yml}
+  - homer/00-service.yml
+  - homer/01-ingress.yml
+  - homer/02-pvc.yml
+  - homer/03-deployment.yml

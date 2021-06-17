@@ -1,0 +1,66 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kanboard
+  namespace: apps
+  labels:
+    app: kanboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kanboard
+  template:
+    metadata:
+      labels:
+        app: kanboard
+    spec:
+      containers:
+      - name: kanboard
+        image: kanboard/kanboard:v1.2.20
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        envFrom:
+        - secretRef:
+            name: kanboard
+        volumeMounts:
+        - mountPath: /var/www/app/data
+          name: kanboard-app-data
+        - mountPath: /var/www/app/plugins
+          name: kanboard-app-plugins
+
+      # These containers are run during pod initialization
+      # git clone --depth 1 --branch <tag_name> <repo_url>
+      initContainers:
+      - name: git-cloner-1
+        image: alpine/git
+        args:
+        - clone
+        - --single-branch
+        - --
+        - https://github.com/kenlog/Nebula.git
+        - /data/Nebula
+        volumeMounts:
+        - mountPath: /data
+          name: kanboard-app-plugins
+
+      - name: git-cloner-2
+        image: alpine/git
+        args:
+        - clone
+        - --single-branch
+        - --
+        - https://github.com/creecros/Customizer.git
+        - /data/Customizer
+        volumeMounts:
+        - mountPath: /data
+          name: kanboard-app-plugins
+
+      volumes:
+      - name: kanboard-app-data
+        persistentVolumeClaim:
+          claimName: kanboard
+      - name: kanboard-app-plugins
+        emptyDir: {}
