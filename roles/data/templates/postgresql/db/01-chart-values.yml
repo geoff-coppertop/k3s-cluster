@@ -1,0 +1,13 @@
+---
+image:
+  repository: arm64v8/postgres
+  tag: latest
+
+service:
+  type: LoadBalancer
+  loadBalancerIP: '{{ postgresql_addr }}'
+
+persistence:
+  storageClass: nfs-client
+
+postgresqlPassword: '{{ postgresql_admin_pass }}'

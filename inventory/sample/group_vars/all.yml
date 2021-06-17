@@ -62,3 +62,18 @@ grafana_admin_user: grafana
 grafana_admin_password: grafana
 grafana_db_user: grafana
 grafana_db_pass: grafana
+
+# PostgreSQL
+postgresql_addr: 192.168.1.73
+postgresql_admin_pass: password
+postgresql_admin_email: example@example.com
+
+# Wiki-js
+wikijs_db_user: admin
+wikijs_db_pass: password
+wikijs_db_name: wikijs
+
+# Kanboard
+kanboard_db_user: admin
+kanboard_db_pass: password
+kanboard_db_name: kanboard

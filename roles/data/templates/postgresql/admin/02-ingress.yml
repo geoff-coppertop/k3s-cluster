@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: postgres-admin
+  namespace: data
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`pgadmin.{{ domain_name }}`)
+    kind: Rule
+    services:
+    - name: postgres-admin
+      port: 80

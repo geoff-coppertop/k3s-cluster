@@ -1,8 +1,6 @@
 ---
 - hosts: local
   gather_facts: false
-  vars:
-    ansible_python_interpreter: '{{ ansible_playbook_python }}'
   pre_tasks:
   - name: Install dependent roles & collections
     command: ansible-galaxy install -i -r ../requirements.yml
@@ -15,6 +13,7 @@
   - geoff_coppertop.k3s_roles.download
   - geoff_coppertop.k3s_roles.raspberrypi
   - cluster_packages
+  - raspberry_pi
 
 - hosts: turing_pi
   become: true
