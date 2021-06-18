@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kanboard
+  namespace: apps
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`task.{{ domain_name }}`)
+    kind: Rule
+    services:
+    - name: kanboard
+      port: 80

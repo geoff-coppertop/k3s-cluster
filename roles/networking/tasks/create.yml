@@ -1,11 +1,9 @@
 ---
 - name: Setup the Networking namespace
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup('template', '00-namespace.yml') | from_yaml }}"
     state: present
     wait: true
-  with_items:
-  - {type: template, path: 00-namespace.yml}
 
 # ------------------------------------------------------------------------------
 
@@ -29,24 +27,37 @@
 
 - name: Setup Unbound
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
     wait: true
-  with_items:
-  - {type: template, path: unbound/01-configmap.yml}
-  - {type: template, path: unbound/02-service-tcp.yml}
-  - {type: template, path: unbound/03-service-udp.yml}
-  - {type: template, path: unbound/04-deployment.yml}
+  loop:
+  - unbound/01-configmap.yml
+  - unbound/02-service-tcp.yml
+  - unbound/03-service-udp.yml
+  - unbound/04-deployment.yml
 
 # ------------------------------------------------------------------------------
+- name: Create temporary file
+  ansible.builtin.tempfile:
+    state: file
+    prefix: traefik
+  register: basicAuthFile
+
+- name: Add a user to a password file suitable for use by libpam-pwdfile
+  community.general.htpasswd:
+    path: '{{ basicAuthFile.path }}'
+    name: '{{ traefik_admin_user }}'
+    password: '{{ traefik_admin_password }}'
+    crypt_scheme: md5_crypt
 
 - name: Start Traefik setup
   k8s:
-    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
     wait: true
-  with_items:
-  - {type: template, path: traefik/01-secret-cloudflare.yml}
+  loop:
+  - traefik/01-secret-cloudflare.yml
+  - traefik/02-configmap.yml
 
 - name: Add Traefik helm repo
   community.kubernetes.helm_repository:
@@ -58,20 +69,22 @@
     name: traefik
     chart_ref: traefik/traefik
     chart_version: 9.13.0
-    values: "{{ lookup('template', 'traefik/02-chart-values.j2') | from_yaml }}"
+    values: "{{ lookup('template', 'traefik/03-chart-values.j2') | from_yaml }}"
     release_namespace: networking
     update_repo_cache: true
     wait: true
 
 - name: Finish Traefik setup
+  vars:
+    basicAuthPasswords: "{{ lookup('file', basicAuthFile.path) | b64encode }}"
   k8s:
-    definition: '{{ lookup( item.type, item.path, split_lines=False ) | from_yaml_all | list }}'
+    definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
     wait: true
-  with_items:
-  - {type: template, path: traefik/03-secret-dashboard.yml}
-  - {type: template, path: traefik/04-middleware.yml}
-  - {type: template, path: traefik/05-ingress.yml}
+  loop:
+  - traefik/04-secret-dashboard.yml
+  - traefik/05-middleware.yml
+  - traefik/06-ingress.yml
 
 # ------------------------------------------------------------------------------
 
@@ -92,9 +105,9 @@
 
 - name: Finish pihole setup
   k8s:
-    definition: '{{ lookup( item.type, item.path ) | from_yaml }}'
+    definition: "{{ lookup('template', item) | from_yaml }}"
     state: present
     wait: true
-  with_items:
-  - {type: template, path: pihole/02-middleware.yml}
-  - {type: template, path: pihole/03-ingress.yml}
+  loop:
+  - pihole/02-middleware.yml
+  - pihole/03-ingress.yml
