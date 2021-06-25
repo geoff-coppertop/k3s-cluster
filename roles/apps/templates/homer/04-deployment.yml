@@ -25,8 +25,7 @@ spec:
         volumeMounts:
         - mountPath: /www/assets
           name: homer-assets
-
       volumes:
       - name: homer-assets
-        persistentVolumeClaim:
-          claimName: homer
+        configMap:
+          name: homer

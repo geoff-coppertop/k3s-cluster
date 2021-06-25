@@ -83,4 +83,5 @@
   - homer/00-service.yml
   - homer/01-ingress.yml
   - homer/02-pvc.yml
-  - homer/03-deployment.yml
+  - homer/03-configmap.yml
+  - homer/04-deployment.yml
