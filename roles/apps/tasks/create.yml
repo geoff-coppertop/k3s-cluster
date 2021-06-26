@@ -85,3 +85,17 @@
   - homer/02-pvc.yml
   - homer/03-configmap.yml
   - homer/04-deployment.yml
+
+# ------------------------------------------------------------------------------
+
+- name: Setup openwebrx
+  k8s:
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
+    state: present
+    wait: true
+  loop:
+  - openwebrx/00-service.yml
+  - openwebrx/01-ingress.yml
+  - openwebrx/02-pvc.yml
+  - openwebrx/03-secret.yml
+  - openwebrx/04-deployment.yml
