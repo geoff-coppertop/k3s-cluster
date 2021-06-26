@@ -11,6 +11,7 @@
 - hosts: local
   roles:
   - helm
+  - hardware
   - storage
   - networking
   - data
