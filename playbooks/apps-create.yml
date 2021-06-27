@@ -1,8 +1,12 @@
 ---
 - hosts: master
-  become: true
   roles:
   - cluster_control
+
+- hosts: rtl_sdr
+  become: true
+  roles:
+  - rtl_sdr
 
 - hosts: local
   roles:
