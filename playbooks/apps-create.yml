@@ -1,8 +1,4 @@
 ---
-- hosts: master
-  roles:
-  - cluster_control
-
 - hosts: rtl_sdr
   become: true
   roles:
@@ -10,7 +6,7 @@
 
 - hosts: local
   roles:
-  - helm
+  - cluster_control
   - hardware
   - storage
   - networking
