@@ -1,0 +1,21 @@
+---
+- name: Check that the dvb driver blacklist exists
+  stat:
+    path: /etc/modprobe.d/blacklist-dvb_usb_rtl28xxu.conf
+  register: stat_result
+
+- name: Copy dvb driver blacklist
+  copy:
+    src: '{{ item.src }}'
+    dest: /etc/modprobe.d/{{ item.path }}
+    mode: u=r,g=r,o=rw
+  with_filetree: ../templates
+  when: not stat_result.stat.exists
+  notify: reboot
+
+- name: Install SDR Package
+  apt:
+    name:
+    - rtl-sdr
+    state: present
+  notify: reboot

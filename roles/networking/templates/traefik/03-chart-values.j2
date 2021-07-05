@@ -13,9 +13,14 @@ additionalArguments:
 - --entrypoints.websecure.http.tls.certresolver={{ acme_issuer }}
 - --entrypoints.websecure.http.tls.domains[0].main={{ domain_name }}
 - --entrypoints.websecure.http.tls.domains[0].sans=*.{{ domain_name }}
+- --entrypoints.mqtt.address=:8883
 - --providers.file.filename=/config/config.yml
 - --serversTransport.insecureSkipVerify=true
 ports:
+  mqtt:
+    port: 8883
+    expose: true
+    protocol: TCP
   web:
     redirectTo: websecure
 envFrom:

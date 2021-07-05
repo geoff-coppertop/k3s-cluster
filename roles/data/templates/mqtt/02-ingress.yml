@@ -1,0 +1,19 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: mqtt
+  namespace: data
+spec:
+  entryPoints:
+  - mqtt
+  routes:
+  - match: HostSNI(`mqtt.{{ domain_name }}`)
+    services:
+    - name: mqtt
+      port: 1883
+  tls:
+    passthrough: false
+    options:
+      name: mqtt
+      namespace: data

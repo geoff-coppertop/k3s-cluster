@@ -1,15 +1,11 @@
 ---
-- hosts: master
-  become: true
-  roles:
-  - cluster_control
-
 - hosts: local
   vars:
     teardown: true
   roles:
-  - helm
+  - cluster_control
   - apps
   - data
   - networking
   - storage
+  - hardware

@@ -1,0 +1,36 @@
+---
+- name: Setup the hardware namespace
+  k8s:
+    definition: "{{ lookup('template', '00-namespace.yml') | from_yaml }}"
+    state: present
+    wait: true
+
+# ------------------------------------------------------------------------------
+
+- name: Setup smarter-device-manager
+  k8s:
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
+    state: present
+    wait: true
+  loop:
+  - smarter-device-manager/00-configmap.yml
+  - smarter-device-manager/01-deployment.yml
+
+- name: Gather facts from hw_io group
+  ansible.builtin.setup:
+  delegate_to: '{{ item }}'
+  delegate_facts: true
+  loop: "{{ groups['hw_io'] }}"
+
+# Apply node label so that smarter device manager picks up this node
+- name: Apply smarter-device-manager label
+  k8s:
+    definition:
+      apiversion: v1
+      kind: Node
+      metadata:
+        name: '{{ hostvars[item].ansible_hostname }}'
+        labels:
+          smarter-device-manager: enabled
+  loop: "{{ groups['hw_io'] }}"
+  when: groups['hw_io'] is not undefined
