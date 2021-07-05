@@ -1,7 +1,13 @@
 ---
+- hosts: rtl_sdr
+  become: true
+  roles:
+  - rtl_sdr
+
 - hosts: local
   roles:
   - cluster_control
+  - hardware
   - storage
   - networking
   - data

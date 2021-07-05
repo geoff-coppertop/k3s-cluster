@@ -1,0 +1,6 @@
+---
+- name: Delete the hardware namespace
+  k8s:
+    definition: "{{ lookup('template', '00-namespace.yml') | from_yaml }}"
+    state: absent
+    wait: true
