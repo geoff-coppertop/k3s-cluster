@@ -158,3 +158,17 @@
   - postgresql/admin/01-service.yml
   - postgresql/admin/02-ingress.yml
   - postgresql/admin/03-deployment.yml
+
+# ------------------------------------------------------------------------------
+
+- name: Setup MQTT
+  k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+    wait: true
+  loop:
+  - mqtt/00-service.yml
+  - mqtt/01-tlsoption.yml
+  - mqtt/02-ingress.yml
+  - mqtt/03-configmap.yml
+  - mqtt/04-deployment.yml
