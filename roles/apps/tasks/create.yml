@@ -99,3 +99,23 @@
   - openwebrx/02-pvc.yml
   - openwebrx/03-secret.yml
   - openwebrx/04-deployment.yml
+
+# ------------------------------------------------------------------------------
+
+- name: Setup wunderground-uploader
+  k8s:
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
+    state: present
+    wait: true
+  loop:
+  - wunderground-uploader/00-deployment.yml
+
+# ------------------------------------------------------------------------------
+
+- name: Setup weather-sensor-bridge
+  k8s:
+    definition: "{{ lookup( 'template', item ) | from_yaml }}"
+    state: present
+    wait: true
+  loop:
+  - weather-sensor-bridge/00-deployment.yml
