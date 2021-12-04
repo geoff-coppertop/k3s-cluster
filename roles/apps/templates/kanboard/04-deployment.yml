@@ -32,13 +32,16 @@ spec:
           name: kanboard-app-plugins
 
       # These containers are run during pod initialization
-      # git clone --depth 1 --branch <tag_name> <repo_url>
       initContainers:
-      - name: git-cloner-1
-        image: alpine/git
+      - name: git-cloner-nebula
+        image: alpine/git:v2.30.2
+        imagePullPolicy: IfNotPresent
         args:
         - clone
-        - --single-branch
+        - --depth
+        - '1'
+        - --branch
+        - 1.3.6
         - --
         - https://github.com/kenlog/Nebula.git
         - /data/Nebula
@@ -46,11 +49,15 @@ spec:
         - mountPath: /data
           name: kanboard-app-plugins
 
-      - name: git-cloner-2
-        image: alpine/git
+      - name: git-cloner-customizer
+        image: alpine/git:v2.30.2
+        imagePullPolicy: IfNotPresent
         args:
         - clone
-        - --single-branch
+        - --depth
+        - '1'
+        - --branch
+        - 1.13.7
         - --
         - https://github.com/creecros/Customizer.git
         - /data/Customizer
