@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: weather-sensor-bridge
-        image: ghcr.io/geoff-coppertop/weather-sensor-bridge:edge
+        image: ghcr.io/geoff-coppertop/weather-sensor-bridge:0.0.6
         imagePullPolicy: Always
         resources:
           requests:
@@ -27,7 +27,7 @@ spec:
             smarter-devices/bus_usb_001_004: 1
         env:
         - name: DEBUG
-          value: debug
+          value: warn
         - name: SERVER_URL
           value: mqtt://mqtt.data.svc:1883
         - name: KA_TIME
