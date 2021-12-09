@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: wunderground-uploader
-        image: ghcr.io/geoff-coppertop/wunderground-uploader:edge
+        image: ghcr.io/geoff-coppertop/wunderground-uploader:0.0.3
         imagePullPolicy: Always
         env:
         - name: DEBUG
