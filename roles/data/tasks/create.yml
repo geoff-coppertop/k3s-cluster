@@ -95,12 +95,22 @@
     name: influxdata
     repo_url: https://helm.influxdata.com/
 
-- name: Deploy Telegraf-DS chart
+- name: Deploy Telegraf Node Monitoring chart
   community.kubernetes.helm:
-    name: telegraf-ds
+    name: telegraf-node
     chart_ref: influxdata/telegraf-ds
     chart_version: 1.0.20
-    values: "{{ lookup('template', 'telegraf/00-chart-values.yml') | from_yaml }}"
+    values: "{{ lookup('template', 'telegraf_nodes/00-chart-values.yml') | from_yaml }}"
+    release_namespace: data
+    update_repo_cache: true
+    wait: true
+
+- name: Deploy Telegraf Cluster Monitoring chart
+  community.kubernetes.helm:
+    name: telegraf-cluster
+    chart_ref: influxdata/telegraf
+    chart_version: 1.8.7
+    values: "{{ lookup('template', 'telegraf_cluster_api/00-chart-values.yml') | from_yaml }}"
     release_namespace: data
     update_repo_cache: true
     wait: true

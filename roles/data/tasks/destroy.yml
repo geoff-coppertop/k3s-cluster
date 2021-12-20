@@ -40,9 +40,17 @@
 
 # ------------------------------------------------------------------------------
 
-- name: Remove Telegraf-DS release
+- name: Remove Telegraf Node Monitoring
   community.kubernetes.helm:
-    name: telegraf-ds
+    name: telegraf-node
+    purge: true
+    namespace: data
+    state: absent
+    wait: true
+
+- name: Remove Telegraf Cluster Monitoring
+  community.kubernetes.helm:
+    name: telegraf-cluster
     purge: true
     namespace: data
     state: absent

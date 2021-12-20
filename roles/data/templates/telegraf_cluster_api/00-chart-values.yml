@@ -1,0 +1,76 @@
+---
+config:
+  outputs:
+  - influxdb:
+      urls:
+      - http://influxdb.data.svc:8086
+      database: '{{ telegraf_cluster_db }}'
+      username: '{{ telegraf_cluster_db_user }}'
+      password: '{{ telegraf_cluster_db_pass }}'
+      skip_database_creation: true
+
+  inputs:
+  - kube_inventory:
+      url: https://kubernetes.default.svc
+      bearer_token: /var/run/secrets/kubernetes.io/serviceaccount/token
+      insecure_skip_verify: true
+      namespace: ''
+
+service:
+  enabled: false
+
+rbac:
+  clusterWide: true
+  rules:
+  - apiGroups:
+    - ''
+    resources:
+    - nodes
+    - nodes/proxy
+    - nodes/metrics
+    - services
+    - endpoints
+    - pods
+    - configmaps
+    - persistentvolumes
+    - persistentvolumeclaims
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - apps
+    resources:
+    - daemonsets
+    - deployments
+    - statefulsets
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - traefik.containo.us
+    resources:
+    - IngressRoute
+    - Middleware
+    verbs:
+    - get
+    - list
+    - watch
+  - apiGroups:
+    - extensions
+    - networking.k8s.io
+    resources:
+    - ingresses
+    - ingresses/status
+    verbs:
+    - get
+    - list
+    - watch
+  - nonResourceURLs:
+    - /metrics
+    verbs:
+    - get
+
+image:
+  tag: 1.20.4
