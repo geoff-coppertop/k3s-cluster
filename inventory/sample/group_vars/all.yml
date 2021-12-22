@@ -54,10 +54,15 @@ pihole_web_password: admin
 influxdb_username: admin
 influxdb_password: password
 
-# Telegraf-DS (Cluster)
-telegraf_cluster_db_name: cluster
+# Telegraf (Cluster)
+telegraf_cluster_db: cluster
 telegraf_cluster_db_user: admin
 telegraf_cluster_db_pass: password
+
+# Telegraf (Weather)
+telegraf_weather_db: weather
+telegraf_weather_db_user: admin
+telegraf_weather_db_pass: password
 
 # Grafana
 grafana_admin_user: admin

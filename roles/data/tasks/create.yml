@@ -56,12 +56,15 @@
     validate_certs: false
     username: '{{ influxdb_username }}'
     password: '{{ influxdb_password }}'
-    database_name: '{{ telegraf_cluster_db }}'
+    database_name: '{{ item }}'
+  loop:
+  - '{{ telegraf_cluster_db }}'
+  - '{{ telegraf_weather_db }}'
 
 - name: Create InfluxDB users for writing data
   community.general.influxdb_user:
-    user_name: '{{ telegraf_cluster_db_user }}'
-    user_password: '{{ telegraf_cluster_db_pass }}'
+    user_name: '{{ item.user }}'
+    user_password: '{{ item.pass }}'
     login_username: '{{ influxdb_username }}'
     login_password: '{{ influxdb_password }}'
     hostname: data.{{ domain_name }}
@@ -70,8 +73,15 @@
     ssl: true
     validate_certs: false
     grants:
-    - database: '{{ telegraf_cluster_db }}'
+    - database: '{{ item.database }}'
       privilege: WRITE
+  loop:
+  - user: '{{ telegraf_cluster_db_user }}'
+    pass: '{{ telegraf_cluster_db_pass }}'
+    database: '{{ telegraf_cluster_db }}'
+  - user: '{{ telegraf_weather_db_user }}'
+    pass: '{{ telegraf_weather_db_pass }}'
+    database: '{{ telegraf_weather_db }}'
 
 - name: Create InfluxDB user for grafana with read privilege
   community.general.influxdb_user:
@@ -85,8 +95,11 @@
     ssl: true
     validate_certs: false
     grants:
-    - database: '{{ telegraf_cluster_db }}'
+    - database: '{{ item }}'
       privilege: READ
+  loop:
+  - '{{ telegraf_cluster_db }}'
+  - '{{ telegraf_weather_db }}'
 
 # ------------------------------------------------------------------------------
 
@@ -97,20 +110,20 @@
 
 - name: Deploy Telegraf Node Monitoring chart
   community.kubernetes.helm:
-    name: telegraf-node
     chart_ref: influxdata/telegraf-ds
     chart_version: 1.0.20
-    values: "{{ lookup('template', 'telegraf_nodes/00-chart-values.yml') | from_yaml }}"
+    values: "{{ lookup('template', 'telegraf_node/00-chart-values.yml') | from_yaml }}"
+    release_name: telegraf-node
     release_namespace: data
     update_repo_cache: true
     wait: true
 
 - name: Deploy Telegraf Cluster Monitoring chart
   community.kubernetes.helm:
-    name: telegraf-cluster
     chart_ref: influxdata/telegraf
     chart_version: 1.8.7
-    values: "{{ lookup('template', 'telegraf_cluster_api/00-chart-values.yml') | from_yaml }}"
+    values: "{{ lookup('template', 'telegraf_cluster/00-chart-values.yml') | from_yaml }}"
+    release_name: telegraf-cluster
     release_namespace: data
     update_repo_cache: true
     wait: true
@@ -182,3 +195,14 @@
   - mqtt/02-ingress.yml
   - mqtt/03-configmap.yml
   - mqtt/04-deployment.yml
+
+# ------------------------------------------------------------------------------
+
+- name: Setup Telegraf Weather Monitoring
+  k8s:
+    definition: "{{ lookup('template', item) | from_yaml }}"
+    state: present
+    wait: true
+  loop:
+  - telegraf_weather/00-configmap.yml
+  - telegraf_weather/01-deployment.yml

@@ -1,20 +1,19 @@
 ---
-config:
-  outputs:
-  - influxdb:
-      urls:
-      - http://influxdb.data.svc:8086
-      database: '{{ telegraf_cluster_db }}'
-      username: '{{ telegraf_cluster_db_user }}'
-      password: '{{ telegraf_cluster_db_pass }}'
-      skip_database_creation: true
+outputs:
+- influxdb:
+    urls:
+    - http://influxdb.data.svc:8086
+    database: '{{ telegraf_cluster_db }}'
+    username: '{{ telegraf_cluster_db_user }}'
+    password: '{{ telegraf_cluster_db_pass }}'
+    skip_database_creation: true
 
-  inputs:
-  - kube_inventory:
-      url: https://kubernetes.default.svc
-      bearer_token: /var/run/secrets/kubernetes.io/serviceaccount/token
-      insecure_skip_verify: true
-      namespace: ''
+inputs:
+- kube_inventory:
+    url: https://kubernetes.default.svc
+    bearer_token: /var/run/secrets/kubernetes.io/serviceaccount/token
+    insecure_skip_verify: true
+    namespace: ''
 
 service:
   enabled: false

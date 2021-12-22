@@ -27,3 +27,13 @@ datasources:
         password: '{{ grafana_db_pass }}'
       jsonData:
         timeInterval: 10s
+    - name: '{{ telegraf_weather_db }}-data'
+      type: influxdb
+      access: proxy
+      database: '{{ telegraf_weather_db }}'
+      user: '{{ grafana_db_user }}'
+      url: http://influxdb.data.svc:8086
+      secureJsonData:
+        password: '{{ grafana_db_pass }}'
+      jsonData:
+        timeInterval: 10s
