@@ -1,0 +1,15 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: openwebrx
+  namespace: apps
+spec:
+  entryPoints:
+  - websecure
+  routes:
+  - match: Host(`rx.{{ domain_name }}`)
+    kind: Rule
+    services:
+    - name: openwebrx
+      port: 8073
