@@ -76,6 +76,11 @@ data:
         subtitle: 'How do I do that thing?'
         tag: 'app'
         url: 'https://wiki.{{ domain_name }}'
+      - name: 'OpenWebRX'
+        icon: 'far fa-copy'
+        subtitle: "Who's making noise?"
+        tag: 'app'
+        url: 'https://rx.{{ domain_name }}'
 
     - name: 'Data'
       icon: 'far fa-hdd'

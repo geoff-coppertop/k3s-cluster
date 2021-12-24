@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwebrx
+  namespace: apps
+  labels:
+    app: openwebrx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openwebrx
+  template:
+    metadata:
+      labels:
+        app: openwebrx
+    spec:
+      containers:
+      - name: openwebrx
+        image: jketterl/openwebrx:1.0.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            smarter-devices/bus_usb_001_004: 1
+          limits:
+            smarter-devices/bus_usb_001_004: 1
+        envFrom:
+        - secretRef:
+            name: openwebrx
+        ports:
+        - containerPort: 8073
+        volumeMounts:
+        - mountPath: /var/lib/openwebrx
+          name: openwebrx
+
+      volumes:
+      - name: openwebrx
+        persistentVolumeClaim:
+          claimName: openwebrx
