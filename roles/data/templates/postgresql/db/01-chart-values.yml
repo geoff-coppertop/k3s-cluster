@@ -1,7 +1,7 @@
 ---
 image:
   repository: arm64v8/postgres
-  tag: latest
+  tag: 13
 
 service:
   type: LoadBalancer
