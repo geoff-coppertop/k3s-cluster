@@ -6,9 +6,10 @@
     wait: true
   loop:
   - postgresql/admin/00-secret.yml
-  - postgresql/admin/01-service.yml
-  - postgresql/admin/02-ingress.yml
-  - postgresql/admin/03-deployment.yml
+  - postgresql/admin/01-configmap.yml
+  - postgresql/admin/02-service.yml
+  - postgresql/admin/03-ingress.yml
+  - postgresql/admin/04-deployment.yml
 
 - name: Remove postgresql release
   community.kubernetes.helm:
@@ -40,9 +41,17 @@
 
 # ------------------------------------------------------------------------------
 
-- name: Remove Telegraf-DS release
+- name: Remove Telegraf Node Monitoring
   community.kubernetes.helm:
-    name: telegraf-ds
+    name: telegraf-node
+    purge: true
+    namespace: data
+    state: absent
+    wait: true
+
+- name: Remove Telegraf Cluster Monitoring
+  community.kubernetes.helm:
+    name: telegraf-cluster
     purge: true
     namespace: data
     state: absent

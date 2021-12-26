@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: telegraf-weather
+  namespace: data
+data:
+  telegraf.conf: |
+    [[inputs.mqtt_consumer]]
+      servers = ["mqtt://mqtt.data.svc:1883"]
+      topics = ["sensor/rtl_433/SwitchDoc_Labs_FT020T_AIO/0_000000"]
+      data_format = "json_v2"
+
+      [[inputs.mqtt_consumer.json_v2]]
+        measurement_name = "weather"
+        [[inputs.mqtt_consumer.json_v2.object]]
+          path = "@this"
+
+    [[outputs.influxdb]]
+      urls                    = ["http://influxdb.data.svc:8086"]
+      database                = "{{ telegraf_weather_db }}"
+      username                = "{{ telegraf_weather_db_user }}"
+      password                = "{{ telegraf_weather_db_pass }}"
+      user_agent              = "telegraf"
+      insecure_skip_verify    = true
+      timeout                 = "5s"
+      retention_policy        = ""
+      skip_database_creation  = true

@@ -18,10 +18,21 @@ spec:
     spec:
       containers:
       - name: pgadmin4
-        image: dpage/pgadmin4:2021-05-18-1
+        image: dpage/pgadmin4:6
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 80
+        env:
+        - name: PGADMIN_SERVER_JSON_FILE
+          value: /pgadmin4/config/servers.json
         envFrom:
         - secretRef:
             name: postgres-admin
+        volumeMounts:
+        - mountPath: /pgadmin4/config
+          name: servers-conf
+
+      volumes:
+      - name: servers-conf
+        configMap:
+          name: pgadmin
